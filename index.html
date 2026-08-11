@@ -499,7 +499,21 @@
             Plotly.newPlot('graph-container-3d', [trace], layout, { displayModeBar: false, responsive: true });
         }
 
-        updateDisplay();
+        updateDisplay()
+        // Haptic Vibration Feature
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+        if (navigator.vibrate) {
+            navigator.vibrate(15);
+        }
+    });
+// Local Storage History Feature
+function saveToHistory(expr, result) {
+    let history = JSON.parse(localStorage.getItem('calc_history')) || [];
+    history.unshift({ expr: expr, result: result });
+    if (history.length > 20) history.pop();
+    localStorage.setItem('calc_history', JSON.stringify(history));
+}        
     </script>
 </body>
 </html>
