@@ -4,225 +4,256 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HiPER Calculator Pro</title>
-    <!-- KaTeX & Graphing CDNs -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #05070a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { background: #0b0f17; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        /* Top Header Bar */
-        .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #0b0f17; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #111827; border-bottom: 1px solid #1f2937; }
         .header .menu-btn { font-size: 22px; cursor: pointer; background: none; border: none; color: #fff; }
         .header .title { font-size: 16px; font-weight: 600; color: #38bdf8; }
 
-        /* Side Drawer Menu */
-        .sidebar { position: fixed; top: 0; left: -260px; width: 250px; height: 100%; background: #0b0f17; box-shadow: 2px 0 10px rgba(0,0,0,0.8); transition: left 0.3s ease; z-index: 1000; overflow-y: auto; padding-bottom: 30px; }
+        .sidebar { position: fixed; top: 0; left: -270px; width: 260px; height: 100%; background: #111827; box-shadow: 2px 0 10px rgba(0,0,0,0.8); transition: left 0.3s ease; z-index: 1000; overflow-y: auto; padding-bottom: 30px; }
         .sidebar.active { left: 0; }
-        .sidebar h3 { padding: 14px 20px 6px; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
-        .sidebar-item { padding: 12px 20px; color: #cbd5e1; font-size: 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar h3 { padding: 14px 20px 6px; font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-item { padding: 12px 20px; color: #d1d5db; font-size: 14px; cursor: pointer; border-bottom: 1px solid #1f2937; }
         .sidebar-item:active, .sidebar-item.active { background: #1e293b; color: #38bdf8; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 999; }
         .overlay.active { display: block; }
 
-        /* Content Views */
-        .content { flex: 1; padding: 8px; display: flex; flex-direction: column; overflow: hidden; }
-        .view-panel { display: none; height: 100%; flex-direction: column; overflow-y: auto; }
+        .content { flex: 1; padding: 12px; display: flex; flex-direction: column; overflow-y: auto; }
+        .view-panel { display: none; height: 100%; flex-direction: column; }
         .view-panel.active { display: flex; }
 
-        /* Banner Ad Container */
-        .ad-container { width: 100%; text-align: center; margin-bottom: 6px; background: #000; min-height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 8px; }
-
-        /* Original Pill Tabs */
-        .tabs { display: flex; gap: 6px; margin-bottom: 10px; background: rgba(5, 7, 10, 0.8); padding: 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); overflow-x: auto; }
-        .tab-btn { flex: 1; padding: 8px 12px; background: transparent; color: #64748b; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-        .tab-btn.active { background: #38bdf8; color: #000; }
-
-        /* Calculator Display */
-        .display { background: rgba(0, 0, 0, 0.6); border-radius: 12px; padding: 12px; text-align: right; margin-bottom: 8px; border: 1px solid rgba(56, 189, 248, 0.2); min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
-        .display .expression { color: #94a3b8; font-size: 14px; word-wrap: break-word; }
+        .display { background: #000; border-radius: 12px; padding: 14px; text-align: right; margin-bottom: 10px; border: 1px solid rgba(56, 189, 248, 0.2); min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
+        .display .expression { color: #9ca3af; font-size: 14px; word-wrap: break-word; }
         .display .result { color: #f8fafc; font-size: 28px; font-weight: 700; }
 
-        /* Keypad Grid */
-        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; flex: 1; }
-        button.btn { background: #1e293b; color: #f8fafc; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; }
-        button.btn:active { background: #334155; }
+        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex: 1; }
+        button.btn { background: #1f2937; color: #f8fafc; border: 1px solid #374151; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; }
+        button.btn:active { background: #374151; }
         button.btn-op { background: #f97316; color: #fff; }
         button.btn-action { background: #ef4444; color: #fff; }
         button.btn-equal { background: #0284c7; grid-column: span 2; }
 
-        /* Input Controls */
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; margin-bottom: 4px; color: #94a3b8; font-size: 13px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 8px; font-size: 14px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; color: #9ca3af; font-size: 13px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: #fff; border-radius: 8px; font-size: 14px; }
 
         .history-list { list-style: none; }
-        .history-item { padding: 10px; border-bottom: 1px solid #1e293b; }
-        .history-item .hist-expr { color: #94a3b8; font-size: 13px; }
+        .history-item { padding: 10px; border-bottom: 1px solid #1f2937; }
+        .history-item .hist-expr { color: #9ca3af; font-size: 13px; }
         .history-item .hist-res { color: #38bdf8; font-size: 16px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <div class="header">
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="title" id="header-title">HiPER Sci-Calc CyberPro</div>
-        <button class="menu-btn" onclick="switchView('history')">📜</button>
+        <div class="title" id="header-title">Scientific Calculator</div>
+        <button class="menu-btn" onclick="selectMenu('history', 'History')">📜</button>
     </div>
 
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Side Menu Drawer -->
     <div class="sidebar" id="sidebar">
         <h3>Calculators</h3>
-        <div class="sidebar-item active" onclick="selectMenu('calc', 'HiPER Sci-Calc CyberPro')">Scientific Calculator</div>
-        <div class="sidebar-item" onclick="selectMenu('unit', 'Unit Converter')">Units Converter</div>
-        <div class="sidebar-item" onclick="selectMenu('discount', 'Discount Calculator')">Discount</div>
-        <div class="sidebar-item" onclick="selectMenu('percent', 'Percentage Calculator')">Percent</div>
-        <div class="sidebar-item" onclick="selectMenu('vat', 'VAT / Tax Calculator')">VAT / Tax</div>
-        
+        <div class="sidebar-item active" onclick="selectMenu('calc', 'Scientific Calculator')">Calculator</div>
+        <div class="sidebar-item" onclick="selectMenu('currency', 'Currencies')">Currencies</div>
+        <div class="sidebar-item" onclick="selectMenu('unit', 'Units')">Units</div>
+        <div class="sidebar-item" onclick="selectMenu('discount', 'Discount')">Discount</div>
+        <div class="sidebar-item" onclick="selectMenu('percent', 'Percent')">Percent</div>
+        <div class="sidebar-item" onclick="selectMenu('vat', 'VAT')">VAT</div>
+
         <h3>All Calculators</h3>
-        <div class="sidebar-item" onclick="selectMenu('loan', 'Loan EMI Calculator')">Loan Calculator</div>
-        <div class="sidebar-item" onclick="selectMenu('tip', 'Tip Calculator')">Tip Calculator</div>
-        
+        <div class="sidebar-item" onclick="selectMenu('body', 'Body Metrics (BMI)')">Body Metrics</div>
+        <div class="sidebar-item" onclick="selectMenu('date', 'Date Calculator')">Date</div>
+        <div class="sidebar-item" onclick="selectMenu('fuelcost', 'Fuel Cost')">Fuel Cost</div>
+        <div class="sidebar-item" onclick="selectMenu('fueleff', 'Fuel Efficiency')">Fuel Efficiency</div>
+        <div class="sidebar-item" onclick="selectMenu('grade', 'Grade Average')">Grade Average</div>
+        <div class="sidebar-item" onclick="selectMenu('hex', 'Hex / Binary')">Hex</div>
+        <div class="sidebar-item" onclick="selectMenu('loan', 'Loan Calculator')">Loan</div>
+        <div class="sidebar-item" onclick="selectMenu('ovulation', 'Ovulation')">Ovulation</div>
+        <div class="sidebar-item" onclick="selectMenu('savings', 'Savings')">Savings</div>
+        <div class="sidebar-item" onclick="selectMenu('tip', 'Tip')">Tip</div>
+        <div class="sidebar-item" onclick="selectMenu('unitprice', 'Unit Price')">Unit Price</div>
+        <div class="sidebar-item" onclick="selectMenu('worldtime', 'World Time')">World Time</div>
+
         <h3>More</h3>
         <div class="sidebar-item" onclick="selectMenu('history', 'Calculation History')">History</div>
     </div>
 
-    <!-- Content Area -->
     <div class="content">
 
-        <!-- Banner Ad Section -->
-        <div class="ad-container">
-            <!-- Adsterra Banner Code Placeholder / Active Banner Script -->
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : 'e0d9e140d2a95360f9f664cd9cdfcc54',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-        </div>
-
-        <!-- 1. Scientific Calculator View (Main Original App) -->
+        <!-- Main Calc View -->
         <div id="view-calc" class="view-panel active">
-            <!-- Original Top Tabs -->
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchSubTab('sci-calc')">Calc</button>
-                <button class="tab-btn" onclick="switchSubTab('calculus')">Calculus</button>
-                <button class="tab-btn" onclick="switchSubTab('ocr')">Camera OCR</button>
-                <button class="tab-btn" onclick="switchSubTab('graph2d')">2D Graph</button>
-                <button class="tab-btn" onclick="switchSubTab('graph3d')">3D Graph</button>
+            <div class="display">
+                <div class="expression" id="expr-display"></div>
+                <div class="result" id="res-display">0</div>
             </div>
-
-            <!-- Sub Tab 1: Scientific Calculator -->
-            <div id="subtab-sci-calc" class="subtab-content" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="display">
-                    <div class="expression" id="expr-display"></div>
-                    <div class="result" id="res-display">0</div>
-                </div>
-                <div class="keypad">
-                    <button class="btn btn-action" onclick="clearCalc()">AC</button>
-                    <button class="btn" onclick="appendInput('(')">(</button>
-                    <button class="btn" onclick="appendInput(')')">)</button>
-                    <button class="btn btn-op" onclick="appendInput('/')">÷</button>
-
-                    <button class="btn" onclick="appendInput('sin(')">sin</button>
-                    <button class="btn" onclick="appendInput('cos(')">cos</button>
-                    <button class="btn" onclick="appendInput('tan(')">tan</button>
-                    <button class="btn btn-op" onclick="appendInput('*')">×</button>
-
-                    <button class="btn" onclick="appendInput('7')">7</button>
-                    <button class="btn" onclick="appendInput('8')">8</button>
-                    <button class="btn" onclick="appendInput('9')">9</button>
-                    <button class="btn btn-op" onclick="appendInput('-')">-</button>
-
-                    <button class="btn" onclick="appendInput('4')">4</button>
-                    <button class="btn" onclick="appendInput('5')">5</button>
-                    <button class="btn" onclick="appendInput('6')">6</button>
-                    <button class="btn btn-op" onclick="appendInput('+')">+</button>
-
-                    <button class="btn" onclick="appendInput('1')">1</button>
-                    <button class="btn" onclick="appendInput('2')">2</button>
-                    <button class="btn" onclick="appendInput('3')">3</button>
-                    <button class="btn btn-equal" onclick="calculateResult()">=</button>
-                </div>
-            </div>
-
-            <!-- Sub Tab 2: Calculus -->
-            <div id="subtab-calculus" class="subtab-content" style="display:none;">
-                <div class="form-group"><label>Algebra / Calculus Expr</label><input type="text" id="alg-expr" placeholder="x^2 + 2x + 1"></div>
-                <button class="btn btn-op" style="width:100%; padding:10px; margin-bottom:10px;" onclick="solveCalculus('derivative')">Derivative (d/dx)</button>
-                <div class="display"><div class="result" id="alg-result">Result</div></div>
-            </div>
-
-            <!-- Sub Tab 3: Camera OCR -->
-            <div id="subtab-ocr" class="subtab-content" style="display:none; text-align:center;">
-                <input type="file" id="ocr-file" accept="image/*" style="margin-bottom:10px;">
-                <div id="ocr-status" style="color:#cbd5e1; font-size:14px;">Upload equation image...</div>
-            </div>
-
-            <!-- Sub Tab 4: 2D Graph -->
-            <div id="subtab-graph2d" class="subtab-content" style="display:none;">
-                <div id="graph-container-2d" style="width:100%; height:250px;"></div>
-            </div>
-
-            <!-- Sub Tab 5: 3D Graph -->
-            <div id="subtab-graph3d" class="subtab-content" style="display:none;">
-                <div id="graph-container-3d" style="width:100%; height:250px;"></div>
+            <div class="keypad">
+                <button class="btn btn-action" onclick="clearCalc()">AC</button>
+                <button class="btn" onclick="appendInput('(')">(</button>
+                <button class="btn" onclick="appendInput(')')">)</button>
+                <button class="btn btn-op" onclick="appendInput('/')">÷</button>
+                <button class="btn" onclick="appendInput('sin(')">sin</button>
+                <button class="btn" onclick="appendInput('cos(')">cos</button>
+                <button class="btn" onclick="appendInput('tan(')">tan</button>
+                <button class="btn btn-op" onclick="appendInput('*')">×</button>
+                <button class="btn" onclick="appendInput('7')">7</button>
+                <button class="btn" onclick="appendInput('8')">8</button>
+                <button class="btn" onclick="appendInput('9')">9</button>
+                <button class="btn btn-op" onclick="appendInput('-')">-</button>
+                <button class="btn" onclick="appendInput('4')">4</button>
+                <button class="btn" onclick="appendInput('5')">5</button>
+                <button class="btn" onclick="appendInput('6')">6</button>
+                <button class="btn btn-op" onclick="appendInput('+')">+</button>
+                <button class="btn" onclick="appendInput('1')">1</button>
+                <button class="btn" onclick="appendInput('2')">2</button>
+                <button class="btn" onclick="appendInput('3')">3</button>
+                <button class="btn btn-equal" onclick="calculateResult()">=</button>
             </div>
         </div>
 
-        <!-- 2. Units View -->
+        <!-- Currencies -->
+        <div id="view-currency" class="view-panel">
+            <div class="form-group"><label>USD ($)</label><input type="number" id="curr-usd" placeholder="100" oninput="convertCurrency()"></div>
+            <div class="form-group"><label>Result in INR (₹)</label><input type="text" id="curr-inr" readonly></div>
+        </div>
+
+        <!-- Units -->
         <div id="view-unit" class="view-panel">
-            <div class="form-group"><label>Value in Kilometers</label><input type="number" id="unit-input" placeholder="Enter KM" oninput="convertUnit()"></div>
-            <div class="form-group"><label>Result in Miles</label><input type="text" id="unit-output" readonly></div>
+            <div class="form-group"><label>Kilometers</label><input type="number" id="unit-input" placeholder="10" oninput="convertUnit()"></div>
+            <div class="form-group"><label>Miles</label><input type="text" id="unit-output" readonly></div>
         </div>
 
-        <!-- 3. Discount View -->
+        <!-- Discount -->
         <div id="view-discount" class="view-panel">
             <div class="form-group"><label>Original Price</label><input type="number" id="disc-price" placeholder="1000"></div>
             <div class="form-group"><label>Discount (%)</label><input type="number" id="disc-percent" placeholder="10"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px; margin-bottom:10px;" onclick="calcDiscount()">Calculate</button>
-            <div class="display"><div class="expression">Final Price</div><div class="result" id="disc-result">0</div></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcDiscount()">Calculate</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="disc-result">0</div></div>
         </div>
 
-        <!-- 4. Percentage View -->
+        <!-- Percent -->
         <div id="view-percent" class="view-panel">
             <div class="form-group"><label>Total Amount</label><input type="number" id="perc-total" placeholder="500"></div>
             <div class="form-group"><label>Percentage (%)</label><input type="number" id="perc-rate" placeholder="15"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px; margin-bottom:10px;" onclick="calcPercent()">Calculate</button>
-            <div class="display"><div class="result" id="perc-result">0</div></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcPercent()">Calculate</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="perc-result">0</div></div>
         </div>
 
-        <!-- 5. VAT View -->
+        <!-- VAT -->
         <div id="view-vat" class="view-panel">
             <div class="form-group"><label>Amount</label><input type="number" id="vat-price" placeholder="1000"></div>
-            <div class="form-group"><label>Tax / VAT Rate (%)</label><input type="number" id="vat-rate" placeholder="18"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px; margin-bottom:10px;" onclick="calcVAT()">Calculate Total</button>
-            <div class="display"><div class="result" id="vat-result">0</div></div>
+            <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="vat-rate" placeholder="18"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcVAT()">Calculate Total</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="vat-result">0</div></div>
         </div>
 
-        <!-- 6. Loan View -->
+        <!-- Body Metrics -->
+        <div id="view-body" class="view-panel">
+            <div class="form-group"><label>Weight (kg)</label><input type="number" id="bmi-weight" placeholder="70"></div>
+            <div class="form-group"><label>Height (cm)</label><input type="number" id="bmi-height" placeholder="170"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcBMI()">Calculate BMI</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="bmi-result">0</div></div>
+        </div>
+
+        <!-- Date -->
+        <div id="view-date" class="view-panel">
+            <div class="form-group"><label>Start Date</label><input type="date" id="date-start"></div>
+            <div class="form-group"><label>End Date</label><input type="date" id="date-end"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcDateDiff()">Calculate Difference</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="date-result">0 Days</div></div>
+        </div>
+
+        <!-- Fuel Cost -->
+        <div id="view-fuelcost" class="view-panel">
+            <div class="form-group"><label>Distance (km)</label><input type="number" id="fc-dist" placeholder="100"></div>
+            <div class="form-group"><label>Mileage (km/l)</label><input type="number" id="fc-avg" placeholder="15"></div>
+            <div class="form-group"><label>Fuel Price (per l)</label><input type="number" id="fc-price" placeholder="100"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcFuelCost()">Calculate Cost</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="fc-result">₹0</div></div>
+        </div>
+
+        <!-- Fuel Efficiency -->
+        <div id="view-fueleff" class="view-panel">
+            <div class="form-group"><label>Distance Traveled (km)</label><input type="number" id="fe-dist" placeholder="300"></div>
+            <div class="form-group"><label>Fuel Used (Liters)</label><input type="number" id="fe-fuel" placeholder="20"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcFuelEff()">Calculate Efficiency</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="fe-result">0 km/l</div></div>
+        </div>
+
+        <!-- Grade Average -->
+        <div id="view-grade" class="view-panel">
+            <div class="form-group"><label>Marks (comma separated)</label><input type="text" id="grade-list" placeholder="85, 90, 78, 92"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcGrade()">Calculate Average</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="grade-result">0%</div></div>
+        </div>
+
+        <!-- Hex -->
+        <div id="view-hex" class="view-panel">
+            <div class="form-group"><label>Decimal Number</label><input type="number" id="hex-dec" placeholder="255" oninput="calcHex()"></div>
+            <div class="form-group"><label>Hexadecimal</label><input type="text" id="hex-res" readonly></div>
+            <div class="form-group"><label>Binary</label><input type="text" id="bin-res" readonly></div>
+        </div>
+
+        <!-- Loan -->
         <div id="view-loan" class="view-panel">
             <div class="form-group"><label>Loan Amount</label><input type="number" id="loan-amount" placeholder="100000"></div>
-            <div class="form-group"><label>Interest Rate (%)</label><input type="number" id="loan-rate" placeholder="8.5"></div>
+            <div class="form-group"><label>Interest Rate (% per year)</label><input type="number" id="loan-rate" placeholder="8.5"></div>
             <div class="form-group"><label>Tenure (Months)</label><input type="number" id="loan-months" placeholder="12"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px; margin-bottom:10px;" onclick="calcEMI()">Calculate EMI</button>
-            <div class="display"><div class="result" id="loan-result">0</div></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcEMI()">Calculate EMI</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="loan-result">₹0</div></div>
         </div>
 
-        <!-- 7. History View -->
+        <!-- Ovulation -->
+        <div id="view-ovulation" class="view-panel">
+            <div class="form-group"><label>Last Period Date</label><input type="date" id="ovu-date"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcOvulation()">Calculate Next Date</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="ovu-result">Date</div></div>
+        </div>
+
+        <!-- Savings -->
+        <div id="view-savings" class="view-panel">
+            <div class="form-group"><label>Monthly Savings</label><input type="number" id="sav-amount" placeholder="5000"></div>
+            <div class="form-group"><label>Months</label><input type="number" id="sav-months" placeholder="12"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcSavings()">Calculate Total</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="sav-result">₹0</div></div>
+        </div>
+
+        <!-- Tip -->
+        <div id="view-tip" class="view-panel">
+            <div class="form-group"><label>Bill Amount</label><input type="number" id="tip-bill" placeholder="1200"></div>
+            <div class="form-group"><label>Tip Rate (%)</label><input type="number" id="tip-rate" placeholder="10"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcTip()">Calculate Tip</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="tip-result">₹0</div></div>
+        </div>
+
+        <!-- Unit Price -->
+        <div id="view-unitprice" class="view-panel">
+            <div class="form-group"><label>Total Price</label><input type="number" id="up-price" placeholder="500"></div>
+            <div class="form-group"><label>Quantity</label><input type="number" id="up-qty" placeholder="5"></div>
+            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcUnitPrice()">Calculate Per Unit</button>
+            <div class="display" style="margin-top:10px;"><div class="result" id="up-result">₹0 / unit</div></div>
+        </div>
+
+        <!-- World Time -->
+        <div id="view-worldtime" class="view-panel">
+            <div class="display" style="text-align:center;">
+                <div class="expression">India (IST)</div>
+                <div class="result" id="wt-ist">--:--:--</div>
+            </div>
+            <div class="display" style="text-align:center;">
+                <div class="expression">USA (UTC-5)</div>
+                <div class="result" id="wt-usa">--:--:--</div>
+            </div>
+        </div>
+
+        <!-- History -->
         <div id="view-history" class="view-panel">
             <ul class="history-list" id="history-container">
                 <li class="history-item"><div class="hist-expr">No history yet</div></li>
@@ -235,7 +266,6 @@
     <script>
         let currInput = "";
 
-        // Button Vibrations
         document.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(15); });
         });
@@ -256,13 +286,7 @@
             let activePanel = document.getElementById('view-' + viewId);
             if(activePanel) activePanel.classList.add('active');
             if(viewId === 'history') renderHistory();
-        }
-
-        function switchSubTab(subTabId) {
-            document.querySelectorAll('.subtab-content').forEach(el => el.style.display = 'none');
-            document.getElementById('subtab-' + subTabId).style.display = 'block';
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if(viewId === 'worldtime') startWorldTime();
         }
 
         function appendInput(val) { currInput += val; document.getElementById('expr-display').innerText = currInput; }
@@ -297,49 +321,6 @@
             `).join('');
         }
 
-        function convertUnit() {
-            let val = parseFloat(document.getElementById('unit-input').value) || 0;
-            document.getElementById('unit-output').value = (val * 0.621371).toFixed(2) + " Miles";
-        }
-
-        function calcDiscount() {
-            let p = parseFloat(document.getElementById('disc-price').value) || 0;
-            let d = parseFloat(document.getElementById('disc-percent').value) || 0;
-            document.getElementById('disc-result').innerText = "₹" + (p - (p * (d / 100))).toFixed(2);
-        }
-
-        function calcPercent() {
-            let t = parseFloat(document.getElementById('perc-total').value) || 0;
-            let r = parseFloat(document.getElementById('perc-rate').value) || 0;
-            document.getElementById('perc-result').innerText = (t * (r / 100)).toFixed(2);
-        }
-
-        function calcVAT() {
-            let p = parseFloat(document.getElementById('vat-price').value) || 0;
-            let r = parseFloat(document.getElementById('vat-rate').value) || 0;
-            document.getElementById('vat-result').innerText = "₹" + (p + (p * (r / 100))).toFixed(2);
-        }
-
-        function calcEMI() {
-            let p = parseFloat(document.getElementById('loan-amount').value) || 0;
-            let r = (parseFloat(document.getElementById('loan-rate').value) || 0) / 12 / 100;
-            let n = parseFloat(document.getElementById('loan-months').value) || 0;
-            if (p && r && n) {
-                let emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-                document.getElementById('loan-result').innerText = "₹" + emi.toFixed(2);
-            }
-        }
-
-        function solveCalculus(type) {
-            let expr = document.getElementById('alg-expr').value;
-            if (expr) {
-                let ans = Algebrite.derivative(expr).toString();
-                document.getElementById('alg-result').innerText = ans;
-            }
-        }
-    </script>
-
-    <!-- Adsterra Social Bar Ads Script -->
-    <script src="https://pl30790893.effectivecpmnetwork.com/e0/d9/e1/e0d9e140d2a95360f9f664cd9cdfcc54.js"></script>
-</body>
-</html>
+        // Calculations
+        function convertCurrency() { let val = parseFloat(document.getElementById('curr-usd').value) || 0; document.getElementById('curr-inr').value = "₹" + (val * 83.5).toFixed(2); }
+        function convertUnit() { let val = parseFloat(document.getEle
