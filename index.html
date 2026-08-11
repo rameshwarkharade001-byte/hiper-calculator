@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HiPER Calculator Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #0b0f17; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -29,7 +27,7 @@
         .view-panel.active { display: flex; }
 
         .display { background: #000; border-radius: 12px; padding: 14px; text-align: right; margin-bottom: 10px; border: 1px solid rgba(56, 189, 248, 0.2); min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
-        .display .expression { color: #9ca3af; font-size: 14px; word-wrap: break-word; }
+        .display .expression { color: #9ca3af; font-size: 14px; word-wrap: break-word; min-height: 18px; }
         .display .result { color: #f8fafc; font-size: 28px; font-weight: 700; }
 
         .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex: 1; }
@@ -37,7 +35,7 @@
         button.btn:active { background: #374151; }
         button.btn-op { background: #f97316; color: #fff; }
         button.btn-action { background: #ef4444; color: #fff; }
-        button.btn-equal { background: #0284c7; grid-column: span 2; }
+        button.btn-equal { background: #0284c7; }
 
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; margin-bottom: 4px; color: #9ca3af; font-size: 13px; }
@@ -69,7 +67,7 @@
         <div class="sidebar-item" onclick="selectMenu('vat', 'VAT')">VAT</div>
 
         <h3>All Calculators</h3>
-        <div class="sidebar-item" onclick="selectMenu('body', 'Body Metrics (BMI)')">Body Metrics</div>
+        <div class="sidebar-item" onclick="selectMenu('body', 'Body Metrics')">Body Metrics</div>
         <div class="sidebar-item" onclick="selectMenu('date', 'Date Calculator')">Date</div>
         <div class="sidebar-item" onclick="selectMenu('fuelcost', 'Fuel Cost')">Fuel Cost</div>
         <div class="sidebar-item" onclick="selectMenu('fueleff', 'Fuel Efficiency')">Fuel Efficiency</div>
@@ -99,22 +97,29 @@
                 <button class="btn" onclick="appendInput('(')">(</button>
                 <button class="btn" onclick="appendInput(')')">)</button>
                 <button class="btn btn-op" onclick="appendInput('/')">÷</button>
+                
                 <button class="btn" onclick="appendInput('sin(')">sin</button>
                 <button class="btn" onclick="appendInput('cos(')">cos</button>
                 <button class="btn" onclick="appendInput('tan(')">tan</button>
                 <button class="btn btn-op" onclick="appendInput('*')">×</button>
+                
                 <button class="btn" onclick="appendInput('7')">7</button>
                 <button class="btn" onclick="appendInput('8')">8</button>
                 <button class="btn" onclick="appendInput('9')">9</button>
                 <button class="btn btn-op" onclick="appendInput('-')">-</button>
+                
                 <button class="btn" onclick="appendInput('4')">4</button>
                 <button class="btn" onclick="appendInput('5')">5</button>
                 <button class="btn" onclick="appendInput('6')">6</button>
                 <button class="btn btn-op" onclick="appendInput('+')">+</button>
+                
                 <button class="btn" onclick="appendInput('1')">1</button>
                 <button class="btn" onclick="appendInput('2')">2</button>
                 <button class="btn" onclick="appendInput('3')">3</button>
-                <button class="btn btn-equal" onclick="calculateResult()">=</button>
+                <button class="btn" onclick="appendInput('.')">.</button>
+
+                <button class="btn" onclick="appendInput('0')" style="grid-column: span 2;">0</button>
+                <button class="btn btn-equal" onclick="calculateResult()" style="grid-column: span 2;">=</button>
             </div>
         </div>
 
@@ -260,9 +265,7 @@
             </ul>
         </div>
 
-    </div>
-
-    <!-- JavaScript Logic -->
+    </div>    <!-- JavaScript Logic -->
     <script>
         let currInput = "";
 
@@ -289,15 +292,28 @@
             if(viewId === 'worldtime') startWorldTime();
         }
 
-        function appendInput(val) { currInput += val; document.getElementById('expr-display').innerText = currInput; }
-        function clearCalc() { currInput = ""; document.getElementById('expr-display').innerText = ""; document.getElementById('res-display').innerText = "0"; }
+        function appendInput(val) { 
+            currInput += val; 
+            document.getElementById('expr-display').innerText = currInput; 
+        }
+
+        function clearCalc() { 
+            currInput = ""; 
+            document.getElementById('expr-display').innerText = ""; 
+            document.getElementById('res-display').innerText = "0"; 
+        }
 
         function calculateResult() {
             try {
-                let res = math.evaluate(currInput);
+                let expr = currInput.replace(/sin\(/g, 'Math.sin(')
+                                   .replace(/cos\(/g, 'Math.cos(')
+                                   .replace(/tan\(/g, 'Math.tan(');
+                let res = eval(expr);
                 document.getElementById('res-display').innerText = res;
                 saveToHistory(currInput, res);
-            } catch (e) { document.getElementById('res-display').innerText = "Error"; }
+            } catch (e) { 
+                document.getElementById('res-display').innerText = "Error"; 
+            }
         }
 
         function saveToHistory(expr, res) {
@@ -321,6 +337,35 @@
             `).join('');
         }
 
-        // Calculations
         function convertCurrency() { let val = parseFloat(document.getElementById('curr-usd').value) || 0; document.getElementById('curr-inr').value = "₹" + (val * 83.5).toFixed(2); }
-        function convertUnit() { let val = parseFloat(document.getEle
+        function convertUnit() { let val = parseFloat(document.getElementById('unit-input').value) || 0; document.getElementById('unit-output').value = (val * 0.621371).toFixed(2) + " Miles"; }
+        function calcDiscount() { let p = parseFloat(document.getElementById('disc-price').value) || 0; let d = parseFloat(document.getElementById('disc-percent').value) || 0; document.getElementById('disc-result').innerText = "₹" + (p - (p * (d / 100))).toFixed(2); }
+        function calcPercent() { let t = parseFloat(document.getElementById('perc-total').value) || 0; let r = parseFloat(document.getElementById('perc-rate').value) || 0; document.getElementById('perc-result').innerText = (t * (r / 100)).toFixed(2); }
+        function calcVAT() { let p = parseFloat(document.getElementById('vat-price').value) || 0; let r = parseFloat(document.getElementById('vat-rate').value) || 0; document.getElementById('vat-result').innerText = "₹" + (p + (p * (r / 100))).toFixed(2); }
+        function calcBMI() { let w = parseFloat(document.getElementById('bmi-weight').value) || 0; let h = (parseFloat(document.getElementById('bmi-height').value) || 0)/100; if(w && h) document.getElementById('bmi-result').innerText = (w / (h*h)).toFixed(1); }
+        function calcDateDiff() { let d1 = new Date(document.getElementById('date-start').value); let d2 = new Date(document.getElementById('date-end').value); if(d1 && d2) document.getElementById('date-result').innerText = Math.abs((d2-d1)/(1000*60*60*24)) + " Days"; }
+        function calcFuelCost() { let d = parseFloat(document.getElementById('fc-dist').value)||0; let a = parseFloat(document.getElementById('fc-avg').value)||1; let p = parseFloat(document.getElementById('fc-price').value)||0; document.getElementById('fc-result').innerText = "₹" + ((d/a)*p).toFixed(2); }
+        function calcFuelEff() { let d = parseFloat(document.getElementById('fe-dist').value)||0; let f = parseFloat(document.getElementById('fe-fuel').value)||1; document.getElementById('fe-result').innerText = (d/f).toFixed(2) + " km/l"; }
+        function calcGrade() { let list = document.getElementById('grade-list').value.split(',').map(Number); let sum = list.reduce((a,b)=>a+b,0); if(list.length) document.getElementById('grade-result').innerText = (sum/list.length).toFixed(1) + "%"; }
+        function calcHex() { let n = parseInt(document.getElementById('hex-dec').value)||0; document.getElementById('hex-res').value = n.toString(16).toUpperCase(); document.getElementById('bin-res').value = n.toString(2); }
+        function calcEMI() { let p = parseFloat(document.getElementById('loan-amount').value)||0; let r = (parseFloat(document.getElementById('loan-rate').value)||0)/12/100; let n = parseFloat(document.getElementById('loan-months').value)||0; if(p&&r&&n) document.getElementById('loan-result').innerText = "₹" + ((p*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1)).toFixed(2); }
+        function calcOvulation() { let d = new Date(document.getElementById('ovu-date').value); if(d) { d.setDate(d.getDate()+14); document.getElementById('ovu-result').innerText = d.toISOString().split('T')[0]; } }
+        function calcSavings() { let a = parseFloat(document.getElementById('sav-amount').value)||0; let m = parseFloat(document.getElementById('sav-months').value)||0; document.getElementById('sav-result').innerText = "₹" + (a*m); }
+        function calcTip() { let b = parseFloat(document.getElementById('tip-bill').value)||0; let r = parseFloat(document.getElementById('tip-rate').value)||0; document.getElementById('tip-result').innerText = "₹" + (b*(r/100)).toFixed(2); }
+        function calcUnitPrice() { let p = parseFloat(document.getElementById('up-price').value)||0; let q = parseFloat(document.getElementById('up-qty').value)||1; document.getElementById('up-result').innerText = "₹" + (p/q).toFixed(2); }
+        
+        function startWorldTime() {
+            setInterval(() => {
+                let now = new Date();
+                document.getElementById('wt-ist').innerText = now.toLocaleTimeString();
+                document.getElementById('wt-usa').innerText = new Date(now.getTime() - (10.5*3600*1000)).toLocaleTimeString();
+            }, 1000);
+        }
+    </script>
+
+    <!-- Adsterra Social Bar Script -->
+    <script src="https://pl30790893.effectivecpmnetwork.com/e0/d9/e1/e0d9e140d2a95360f9f664cd9cdfcc54.js"></script>
+</body>
+</html>
+
+            
