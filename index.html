@@ -1,371 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HiPER Calculator Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #0b0f17; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator Pro</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: #121212; color: #ffffff; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; overflow: hidden; }
+    
+    /* Calculator Container */
+    .calculator { display: flex; flex-direction: column; height: calc(100vh - 60px); padding: 15px; }
+    
+    /* Display Screen */
+    .display-screen { background: #1e1e1e; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; flex: 1; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+    .history { font-size: 1.1rem; color: #a5a5a5; min-height: 24px; word-break: break-all; }
+    .input-val { font-size: 2.5rem; font-weight: bold; margin-top: 5px; word-break: break-all; }
+    .word-val { font-size: 0.9rem; color: #00adb5; margin-top: 5px; font-weight: 500; text-align: right; }
 
-        .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #111827; border-bottom: 1px solid #1f2937; }
-        .header .menu-btn { font-size: 22px; cursor: pointer; background: none; border: none; color: #fff; }
-        .header .title { font-size: 16px; font-weight: 600; color: #38bdf8; }
+    /* Keypad Grid */
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    button { background: #2d2d2d; border: none; outline: none; border-radius: 16px; font-size: 1.5rem; color: #fff; padding: 18px 0; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+    button:active { background: #3d3d3d; transform: scale(0.95); }
+    
+    /* Special Button Colors */
+    .btn-operator { color: #00adb5; background: #222831; }
+    .btn-action { color: #ff5722; background: #222831; }
+    .btn-equal { background: #00adb5; color: #fff; grid-column: span 2; border-radius: 16px; }
 
-        .sidebar { position: fixed; top: 0; left: -270px; width: 260px; height: 100%; background: #111827; box-shadow: 2px 0 10px rgba(0,0,0,0.8); transition: left 0.3s ease; z-index: 1000; overflow-y: auto; padding-bottom: 30px; }
-        .sidebar.active { left: 0; }
-        .sidebar h3 { padding: 14px 20px 6px; font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
-        .sidebar-item { padding: 12px 20px; color: #d1d5db; font-size: 14px; cursor: pointer; border-bottom: 1px solid #1f2937; }
-        .sidebar-item:active, .sidebar-item.active { background: #1e293b; color: #38bdf8; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 999; }
-        .overlay.active { display: block; }
-
-        .content { flex: 1; padding: 12px; display: flex; flex-direction: column; overflow-y: auto; }
-        .view-panel { display: none; height: 100%; flex-direction: column; }
-        .view-panel.active { display: flex; }
-
-        .display { background: #000; border-radius: 12px; padding: 14px; text-align: right; margin-bottom: 10px; border: 1px solid rgba(56, 189, 248, 0.2); min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
-        .display .expression { color: #9ca3af; font-size: 14px; word-wrap: break-word; min-height: 18px; }
-        .display .result { color: #f8fafc; font-size: 28px; font-weight: 700; }
-
-        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex: 1; }
-        button.btn { background: #1f2937; color: #f8fafc; border: 1px solid #374151; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; }
-        button.btn:active { background: #374151; }
-        button.btn-op { background: #f97316; color: #fff; }
-        button.btn-action { background: #ef4444; color: #fff; }
-        button.btn-equal { background: #0284c7; }
-
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; margin-bottom: 4px; color: #9ca3af; font-size: 13px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: #fff; border-radius: 8px; font-size: 14px; }
-
-        .history-list { list-style: none; }
-        .history-item { padding: 10px; border-bottom: 1px solid #1f2937; }
-        .history-item .hist-expr { color: #9ca3af; font-size: 13px; }
-        .history-item .hist-res { color: #38bdf8; font-size: 16px; font-weight: bold; }
-    </style>
+    /* Bottom Fixed Banner Ad Container */
+    #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="title" id="header-title">Scientific Calculator</div>
-        <button class="menu-btn" onclick="selectMenu('history', 'History')">📜</button>
+  <div class="calculator">
+    <!-- Screen -->
+    <div class="display-screen">
+      <div class="history" id="history"></div>
+      <div class="input-val" id="display">0</div>
+      <div class="word-val" id="words">Zero</div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <!-- Buttons -->
+    <div class="buttons">
+      <button class="btn-action" onclick="clearDisplay()">C</button>
+      <button class="btn-operator" onclick="appendOp('/')">÷</button>
+      <button class="btn-operator" onclick="appendOp('*')">×</button>
+      <button class="btn-action" onclick="deleteLast()">⌫</button>
 
-    <div class="sidebar" id="sidebar">
-        <h3>Calculators</h3>
-        <div class="sidebar-item active" onclick="selectMenu('calc', 'Scientific Calculator')">Calculator</div>
-        <div class="sidebar-item" onclick="selectMenu('currency', 'Currencies')">Currencies</div>
-        <div class="sidebar-item" onclick="selectMenu('unit', 'Units')">Units</div>
-        <div class="sidebar-item" onclick="selectMenu('discount', 'Discount')">Discount</div>
-        <div class="sidebar-item" onclick="selectMenu('percent', 'Percent')">Percent</div>
-        <div class="sidebar-item" onclick="selectMenu('vat', 'VAT')">VAT</div>
+      <button onclick="appendNum('7')">7</button>
+      <button onclick="appendNum('8')">8</button>
+      <button onclick="appendNum('9')">9</button>
+      <button class="btn-operator" onclick="appendOp('-')">-</button>
 
-        <h3>All Calculators</h3>
-        <div class="sidebar-item" onclick="selectMenu('body', 'Body Metrics')">Body Metrics</div>
-        <div class="sidebar-item" onclick="selectMenu('date', 'Date Calculator')">Date</div>
-        <div class="sidebar-item" onclick="selectMenu('fuelcost', 'Fuel Cost')">Fuel Cost</div>
-        <div class="sidebar-item" onclick="selectMenu('fueleff', 'Fuel Efficiency')">Fuel Efficiency</div>
-        <div class="sidebar-item" onclick="selectMenu('grade', 'Grade Average')">Grade Average</div>
-        <div class="sidebar-item" onclick="selectMenu('hex', 'Hex / Binary')">Hex</div>
-        <div class="sidebar-item" onclick="selectMenu('loan', 'Loan Calculator')">Loan</div>
-        <div class="sidebar-item" onclick="selectMenu('ovulation', 'Ovulation')">Ovulation</div>
-        <div class="sidebar-item" onclick="selectMenu('savings', 'Savings')">Savings</div>
-        <div class="sidebar-item" onclick="selectMenu('tip', 'Tip')">Tip</div>
-        <div class="sidebar-item" onclick="selectMenu('unitprice', 'Unit Price')">Unit Price</div>
-        <div class="sidebar-item" onclick="selectMenu('worldtime', 'World Time')">World Time</div>
+      <button onclick="appendNum('4')">4</button>
+      <button onclick="appendNum('5')">5</button>
+      <button onclick="appendNum('6')">6</button>
+      <button class="btn-operator" onclick="appendOp('+')">+</button>
 
-        <h3>More</h3>
-        <div class="sidebar-item" onclick="selectMenu('history', 'Calculation History')">History</div>
+      <button onclick="appendNum('1')">1</button>
+      <button onclick="appendNum('2')">2</button>
+      <button onclick="appendNum('3')">3</button>
+      <button class="btn-operator" onclick="appendOp('%')">%</button>
+
+      <button onclick="appendNum('0')">0</button>
+      <button onclick="appendNum('00')">00</button>
+      <button onclick="appendNum('.')">.</button>
+      <button class="btn-equal" onclick="calculate()">=</button>
     </div>
+  </div>
 
-    <div class="content">
-
-        <!-- Main Calc View -->
-        <div id="view-calc" class="view-panel active">
-            <div class="display">
-                <div class="expression" id="expr-display"></div>
-                <div class="result" id="res-display">0</div>
-            </div>
-            <div class="keypad">
-                <button class="btn btn-action" onclick="clearCalc()">AC</button>
-                <button class="btn" onclick="appendInput('(')">(</button>
-                <button class="btn" onclick="appendInput(')')">)</button>
-                <button class="btn btn-op" onclick="appendInput('/')">÷</button>
-                
-                <button class="btn" onclick="appendInput('sin(')">sin</button>
-                <button class="btn" onclick="appendInput('cos(')">cos</button>
-                <button class="btn" onclick="appendInput('tan(')">tan</button>
-                <button class="btn btn-op" onclick="appendInput('*')">×</button>
-                
-                <button class="btn" onclick="appendInput('7')">7</button>
-                <button class="btn" onclick="appendInput('8')">8</button>
-                <button class="btn" onclick="appendInput('9')">9</button>
-                <button class="btn btn-op" onclick="appendInput('-')">-</button>
-                
-                <button class="btn" onclick="appendInput('4')">4</button>
-                <button class="btn" onclick="appendInput('5')">5</button>
-                <button class="btn" onclick="appendInput('6')">6</button>
-                <button class="btn btn-op" onclick="appendInput('+')">+</button>
-                
-                <button class="btn" onclick="appendInput('1')">1</button>
-                <button class="btn" onclick="appendInput('2')">2</button>
-                <button class="btn" onclick="appendInput('3')">3</button>
-                <button class="btn" onclick="appendInput('.')">.</button>
-
-                <button class="btn" onclick="appendInput('0')" style="grid-column: span 2;">0</button>
-                <button class="btn btn-equal" onclick="calculateResult()" style="grid-column: span 2;">=</button>
-            </div>
-        </div>
-
-        <!-- Currencies -->
-        <div id="view-currency" class="view-panel">
-            <div class="form-group"><label>USD ($)</label><input type="number" id="curr-usd" placeholder="100" oninput="convertCurrency()"></div>
-            <div class="form-group"><label>Result in INR (₹)</label><input type="text" id="curr-inr" readonly></div>
-        </div>
-
-        <!-- Units -->
-        <div id="view-unit" class="view-panel">
-            <div class="form-group"><label>Kilometers</label><input type="number" id="unit-input" placeholder="10" oninput="convertUnit()"></div>
-            <div class="form-group"><label>Miles</label><input type="text" id="unit-output" readonly></div>
-        </div>
-
-        <!-- Discount -->
-        <div id="view-discount" class="view-panel">
-            <div class="form-group"><label>Original Price</label><input type="number" id="disc-price" placeholder="1000"></div>
-            <div class="form-group"><label>Discount (%)</label><input type="number" id="disc-percent" placeholder="10"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcDiscount()">Calculate</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="disc-result">0</div></div>
-        </div>
-
-        <!-- Percent -->
-        <div id="view-percent" class="view-panel">
-            <div class="form-group"><label>Total Amount</label><input type="number" id="perc-total" placeholder="500"></div>
-            <div class="form-group"><label>Percentage (%)</label><input type="number" id="perc-rate" placeholder="15"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcPercent()">Calculate</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="perc-result">0</div></div>
-        </div>
-
-        <!-- VAT -->
-        <div id="view-vat" class="view-panel">
-            <div class="form-group"><label>Amount</label><input type="number" id="vat-price" placeholder="1000"></div>
-            <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="vat-rate" placeholder="18"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcVAT()">Calculate Total</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="vat-result">0</div></div>
-        </div>
-
-        <!-- Body Metrics -->
-        <div id="view-body" class="view-panel">
-            <div class="form-group"><label>Weight (kg)</label><input type="number" id="bmi-weight" placeholder="70"></div>
-            <div class="form-group"><label>Height (cm)</label><input type="number" id="bmi-height" placeholder="170"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcBMI()">Calculate BMI</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="bmi-result">0</div></div>
-        </div>
-
-        <!-- Date -->
-        <div id="view-date" class="view-panel">
-            <div class="form-group"><label>Start Date</label><input type="date" id="date-start"></div>
-            <div class="form-group"><label>End Date</label><input type="date" id="date-end"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcDateDiff()">Calculate Difference</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="date-result">0 Days</div></div>
-        </div>
-
-        <!-- Fuel Cost -->
-        <div id="view-fuelcost" class="view-panel">
-            <div class="form-group"><label>Distance (km)</label><input type="number" id="fc-dist" placeholder="100"></div>
-            <div class="form-group"><label>Mileage (km/l)</label><input type="number" id="fc-avg" placeholder="15"></div>
-            <div class="form-group"><label>Fuel Price (per l)</label><input type="number" id="fc-price" placeholder="100"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcFuelCost()">Calculate Cost</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="fc-result">₹0</div></div>
-        </div>
-
-        <!-- Fuel Efficiency -->
-        <div id="view-fueleff" class="view-panel">
-            <div class="form-group"><label>Distance Traveled (km)</label><input type="number" id="fe-dist" placeholder="300"></div>
-            <div class="form-group"><label>Fuel Used (Liters)</label><input type="number" id="fe-fuel" placeholder="20"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcFuelEff()">Calculate Efficiency</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="fe-result">0 km/l</div></div>
-        </div>
-
-        <!-- Grade Average -->
-        <div id="view-grade" class="view-panel">
-            <div class="form-group"><label>Marks (comma separated)</label><input type="text" id="grade-list" placeholder="85, 90, 78, 92"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcGrade()">Calculate Average</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="grade-result">0%</div></div>
-        </div>
-
-        <!-- Hex -->
-        <div id="view-hex" class="view-panel">
-            <div class="form-group"><label>Decimal Number</label><input type="number" id="hex-dec" placeholder="255" oninput="calcHex()"></div>
-            <div class="form-group"><label>Hexadecimal</label><input type="text" id="hex-res" readonly></div>
-            <div class="form-group"><label>Binary</label><input type="text" id="bin-res" readonly></div>
-        </div>
-
-        <!-- Loan -->
-        <div id="view-loan" class="view-panel">
-            <div class="form-group"><label>Loan Amount</label><input type="number" id="loan-amount" placeholder="100000"></div>
-            <div class="form-group"><label>Interest Rate (% per year)</label><input type="number" id="loan-rate" placeholder="8.5"></div>
-            <div class="form-group"><label>Tenure (Months)</label><input type="number" id="loan-months" placeholder="12"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcEMI()">Calculate EMI</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="loan-result">₹0</div></div>
-        </div>
-
-        <!-- Ovulation -->
-        <div id="view-ovulation" class="view-panel">
-            <div class="form-group"><label>Last Period Date</label><input type="date" id="ovu-date"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcOvulation()">Calculate Next Date</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="ovu-result">Date</div></div>
-        </div>
-
-        <!-- Savings -->
-        <div id="view-savings" class="view-panel">
-            <div class="form-group"><label>Monthly Savings</label><input type="number" id="sav-amount" placeholder="5000"></div>
-            <div class="form-group"><label>Months</label><input type="number" id="sav-months" placeholder="12"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcSavings()">Calculate Total</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="sav-result">₹0</div></div>
-        </div>
-
-        <!-- Tip -->
-        <div id="view-tip" class="view-panel">
-            <div class="form-group"><label>Bill Amount</label><input type="number" id="tip-bill" placeholder="1200"></div>
-            <div class="form-group"><label>Tip Rate (%)</label><input type="number" id="tip-rate" placeholder="10"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcTip()">Calculate Tip</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="tip-result">₹0</div></div>
-        </div>
-
-        <!-- Unit Price -->
-        <div id="view-unitprice" class="view-panel">
-            <div class="form-group"><label>Total Price</label><input type="number" id="up-price" placeholder="500"></div>
-            <div class="form-group"><label>Quantity</label><input type="number" id="up-qty" placeholder="5"></div>
-            <button class="btn btn-op" style="width:100%; padding:10px;" onclick="calcUnitPrice()">Calculate Per Unit</button>
-            <div class="display" style="margin-top:10px;"><div class="result" id="up-result">₹0 / unit</div></div>
-        </div>
-
-        <!-- World Time -->
-        <div id="view-worldtime" class="view-panel">
-            <div class="display" style="text-align:center;">
-                <div class="expression">India (IST)</div>
-                <div class="result" id="wt-ist">--:--:--</div>
-            </div>
-            <div class="display" style="text-align:center;">
-                <div class="expression">USA (UTC-5)</div>
-                <div class="result" id="wt-usa">--:--:--</div>
-            </div>
-        </div>
-
-        <!-- History -->
-        <div id="view-history" class="view-panel">
-            <ul class="history-list" id="history-container">
-                <li class="history-item"><div class="hist-expr">No history yet</div></li>
-            </ul>
-        </div>
-
-    </div>    <!-- JavaScript Logic -->
-    <script>
-        let currInput = "";
-
-        document.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(15); });
-        });
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function selectMenu(viewId, title) {
-            document.getElementById('header-title').innerText = title;
-            switchView(viewId);
-            toggleSidebar();
-        }
-
-        function switchView(viewId) {
-            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
-            let activePanel = document.getElementById('view-' + viewId);
-            if(activePanel) activePanel.classList.add('active');
-            if(viewId === 'history') renderHistory();
-            if(viewId === 'worldtime') startWorldTime();
-        }
-
-        function appendInput(val) { 
-            currInput += val; 
-            document.getElementById('expr-display').innerText = currInput; 
-        }
-
-        function clearCalc() { 
-            currInput = ""; 
-            document.getElementById('expr-display').innerText = ""; 
-            document.getElementById('res-display').innerText = "0"; 
-        }
-
-        function calculateResult() {
-            try {
-                let expr = currInput.replace(/sin\(/g, 'Math.sin(')
-                                   .replace(/cos\(/g, 'Math.cos(')
-                                   .replace(/tan\(/g, 'Math.tan(');
-                let res = eval(expr);
-                document.getElementById('res-display').innerText = res;
-                saveToHistory(currInput, res);
-            } catch (e) { 
-                document.getElementById('res-display').innerText = "Error"; 
-            }
-        }
-
-        function saveToHistory(expr, res) {
-            let history = JSON.parse(localStorage.getItem('calc_hist')) || [];
-            history.unshift({ expr: expr, res: res });
-            localStorage.setItem('calc_hist', JSON.stringify(history));
-        }
-
-        function renderHistory() {
-            let history = JSON.parse(localStorage.getItem('calc_hist')) || [];
-            let container = document.getElementById('history-container');
-            if (history.length === 0) {
-                container.innerHTML = '<li class="history-item"><div class="hist-expr">No history available</div></li>';
-                return;
-            }
-            container.innerHTML = history.map(item => `
-                <li class="history-item">
-                    <div class="hist-expr">${item.expr}</div>
-                    <div class="hist-res">= ${item.res}</div>
-                </li>
-            `).join('');
-        }
-
-        function convertCurrency() { let val = parseFloat(document.getElementById('curr-usd').value) || 0; document.getElementById('curr-inr').value = "₹" + (val * 83.5).toFixed(2); }
-        function convertUnit() { let val = parseFloat(document.getElementById('unit-input').value) || 0; document.getElementById('unit-output').value = (val * 0.621371).toFixed(2) + " Miles"; }
-        function calcDiscount() { let p = parseFloat(document.getElementById('disc-price').value) || 0; let d = parseFloat(document.getElementById('disc-percent').value) || 0; document.getElementById('disc-result').innerText = "₹" + (p - (p * (d / 100))).toFixed(2); }
-        function calcPercent() { let t = parseFloat(document.getElementById('perc-total').value) || 0; let r = parseFloat(document.getElementById('perc-rate').value) || 0; document.getElementById('perc-result').innerText = (t * (r / 100)).toFixed(2); }
-        function calcVAT() { let p = parseFloat(document.getElementById('vat-price').value) || 0; let r = parseFloat(document.getElementById('vat-rate').value) || 0; document.getElementById('vat-result').innerText = "₹" + (p + (p * (r / 100))).toFixed(2); }
-        function calcBMI() { let w = parseFloat(document.getElementById('bmi-weight').value) || 0; let h = (parseFloat(document.getElementById('bmi-height').value) || 0)/100; if(w && h) document.getElementById('bmi-result').innerText = (w / (h*h)).toFixed(1); }
-        function calcDateDiff() { let d1 = new Date(document.getElementById('date-start').value); let d2 = new Date(document.getElementById('date-end').value); if(d1 && d2) document.getElementById('date-result').innerText = Math.abs((d2-d1)/(1000*60*60*24)) + " Days"; }
-        function calcFuelCost() { let d = parseFloat(document.getElementById('fc-dist').value)||0; let a = parseFloat(document.getElementById('fc-avg').value)||1; let p = parseFloat(document.getElementById('fc-price').value)||0; document.getElementById('fc-result').innerText = "₹" + ((d/a)*p).toFixed(2); }
-        function calcFuelEff() { let d = parseFloat(document.getElementById('fe-dist').value)||0; let f = parseFloat(document.getElementById('fe-fuel').value)||1; document.getElementById('fe-result').innerText = (d/f).toFixed(2) + " km/l"; }
-        function calcGrade() { let list = document.getElementById('grade-list').value.split(',').map(Number); let sum = list.reduce((a,b)=>a+b,0); if(list.length) document.getElementById('grade-result').innerText = (sum/list.length).toFixed(1) + "%"; }
-        function calcHex() { let n = parseInt(document.getElementById('hex-dec').value)||0; document.getElementById('hex-res').value = n.toString(16).toUpperCase(); document.getElementById('bin-res').value = n.toString(2); }
-        function calcEMI() { let p = parseFloat(document.getElementById('loan-amount').value)||0; let r = (parseFloat(document.getElementById('loan-rate').value)||0)/12/100; let n = parseFloat(document.getElementById('loan-months').value)||0; if(p&&r&&n) document.getElementById('loan-result').innerText = "₹" + ((p*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1)).toFixed(2); }
-        function calcOvulation() { let d = new Date(document.getElementById('ovu-date').value); if(d) { d.setDate(d.getDate()+14); document.getElementById('ovu-result').innerText = d.toISOString().split('T')[0]; } }
-        function calcSavings() { let a = parseFloat(document.getElementById('sav-amount').value)||0; let m = parseFloat(document.getElementById('sav-months').value)||0; document.getElementById('sav-result').innerText = "₹" + (a*m); }
-        function calcTip() { let b = parseFloat(document.getElementById('tip-bill').value)||0; let r = parseFloat(document.getElementById('tip-rate').value)||0; document.getElementById('tip-result').innerText = "₹" + (b*(r/100)).toFixed(2); }
-        function calcUnitPrice() { let p = parseFloat(document.getElementById('up-price').value)||0; let q = parseFloat(document.getElementById('up-qty').value)||1; document.getElementById('up-result').innerText = "₹" + (p/q).toFixed(2); }
-        
-        function startWorldTime() {
-            setInterval(() => {
-                let now = new Date();
-                document.getElementById('wt-ist').innerText = now.toLocaleTimeString();
-                document.getElementById('wt-usa').innerText = new Date(now.getTime() - (10.5*3600*1000)).toLocaleTimeString();
-            }, 1000);
-        }
+  <!-- Adsterra 320x50 Banner Code Included -->
+  <div id="ad-container">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'bd2b6f488661ebbe01d2c94d03df6b31',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
     </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/bd2b6f488661ebbe01d2c94d03df6b31/invoke.js"></script>
+  </div>
 
-    <!-- Adsterra Social Bar Script -->
-    <script src="https://pl30790893.effectivecpmnetwork.com/e0/d9/e1/e0d9e140d2a95360f9f664cd9cdfcc54.js"></script>
+  <script>
+    let display = document.getElementById('display');
+    let history = document.getElementById('history');
+    let words = document.getElementById('words');
+
+    function appendNum(num) {
+      if (display.innerText === '0') {
+        display.innerText = num;
+      } else {
+        display.innerText += num;
+      }
+      updateWords();
+    }
+
+    function appendOp(op) {
+      let lastChar = display.innerText.slice(-1);
+      if (['+', '-', '*', '/', '%'].includes(lastChar)) {
+        display.innerText = display.innerText.slice(0, -1) + op;
+      } else {
+        display.innerText += op;
+      }
+    }
+
+    function clearDisplay() {
+      display.innerText = '0';
+      history.innerText = '';
+      words.innerText = 'Zero';
+    }
+
+    function deleteLast() {
+      if (display.innerText.length === 1 || display.innerText === 'Error') {
+        display.innerText = '0';
+      } else {
+        display.innerText = display.innerText.slice(0, -1);
+      }
+      updateWords();
+    }
+
+    function calculate() {
+      try {
+        history.innerText = display.innerText;
+        let result = eval(display.innerText.replace(/×/g, '*').replace(/÷/g, '/'));
+        display.innerText = result;
+        updateWords();
+      } catch (e) {
+        display.innerText = 'Error';
+        words.innerText = '';
+      }
+    }
+
+    function updateWords() {
+      let val = parseFloat(display.innerText);
+      if (!isNaN(val) && isFinite(val) && val < 1000000000) {
+        words.innerText = numberToWords(val);
+      } else {
+        words.innerText = '';
+      }
+    }
+
+    function numberToWords(num) {
+      if (num === 0) return 'Zero';
+      const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+      const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+      
+      function inWords(n) {
+        if (n < 20) return a[n];
+        let digit = n % 10;
+        if (n < 100) return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit] : '');
+        if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' + inWords(n % 100) : '');
+        if (n < 100000) return inWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 ? ' ' + inWords(n % 1000) : '');
+        if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 ? ' ' + inWords(n % 100000) : '');
+        return inWords(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 ? ' ' + inWords(n % 10000000) : '');
+      }
+      return inWords(num);
+    }
+  </script>
 </body>
 </html>
-
-            
