@@ -3,73 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All-in-One Multi Calculator</title>
+  <title>Calculator Pro - All in One</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: #121318; color: #ffffff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-    
-    /* Header & Sidebar */
     .header { background: #1c222d; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2d323e; }
     .header h2 { font-size: 1.1rem; color: #00b4d8; font-weight: 600; }
     .menu-btn { font-size: 1.4rem; background: none; border: none; color: #fff; cursor: pointer; }
-    
     .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #1a1d24; z-index: 10000; transition: 0.3s ease; padding: 20px; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
     .sidebar.active { left: 0; }
     .sidebar h3 { color: #00b4d8; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 8px; }
     .sidebar ul { list-style: none; }
-    .sidebar li { padding: 10px 12px; margin-bottom: 6px; background: #23272f; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
+    .sidebar li { padding: 10px 12px; margin-bottom: 6px; background: #23272f; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
     .sidebar li:hover { background: #00b4d8; color: #fff; }
-
-    /* Main Container */
-    .app-body { flex: 1; display: flex; flex-direction: column; padding: 15px; padding-bottom: 60px; overflow-y: auto; }
-    .tool-page { display: none; flex-direction: column; height: 100%; justify-content: flex-end; }
+    .app-body { flex: 1; display: flex; flex-direction: column; padding: 15px; padding-bottom: 65px; overflow-y: auto; }
+    .tool-page { display: none; flex-direction: column; height: 100%; justify-content: flex-start; }
     .tool-page.active { display: flex; }
-
-    /* Display Area */
-    .display-screen { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding: 10px; text-align: right; word-break: break-all; min-height: 120px; margin-bottom: 10px; }
+    .display-screen { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding: 10px; text-align: right; word-break: break-all; min-height: 120px; margin-bottom: 10px; background: #1a1d24; border-radius: 12px; }
     .history { font-size: 1.1rem; color: #8a8d9b; min-height: 22px; }
-    .input-val { font-size: 2.8rem; font-weight: 700; color: #ffffff; }
+    .input-val { font-size: 2.5rem; font-weight: 700; color: #ffffff; }
     .word-val { font-size: 0.85rem; color: #00b4d8; margin-top: 4px; }
-
-    /* Numpad Grid */
-    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    button.btn { background: #23272f; border: none; border-radius: 16px; font-size: 1.4rem; color: #ffffff; height: 56px; font-weight: 500; cursor: pointer; }
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: auto; }
+    button.btn { background: #23272f; border: none; border-radius: 14px; font-size: 1.3rem; color: #ffffff; height: 54px; font-weight: 500; cursor: pointer; }
     button.btn:active { background: #323846; transform: scale(0.95); }
     .btn-op { color: #00b4d8; background: #1c222d; }
     .btn-clear { color: #ff6b4a; background: #1c222d; }
     .btn-equal { background: #00b4d8; color: #fff; font-size: 1.8rem; }
-    .btn-sci { color: #ffb703; background: #1c222d; font-size: 1rem; }
-
-    /* Generic Tool Inputs UI */
-    .form-group { margin-bottom: 15px; text-align: left; }
+    .btn-sci { color: #ffb703; background: #1c222d; font-size: 0.95rem; }
+    .form-group { margin-bottom: 12px; text-align: left; }
     .form-group label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
     .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #23272f; color: #fff; font-size: 1rem; outline: none; }
-    .calc-submit-btn { width: 100%; padding: 14px; background: #00b4d8; border: none; border-radius: 12px; color: #fff; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-    .res-box { margin-top: 15px; padding: 15px; background: #1c222d; border-radius: 12px; text-align: center; font-size: 1.2rem; font-weight: bold; color: #00b4d8; }
-
-    /* Bottom Fixed Banner Ad Container */
-    #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    .calc-submit-btn { width: 100%; padding: 12px; background: #00b4d8; border: none; border-radius: 10px; color: #fff; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 5px; }
+    .res-box { margin-top: 15px; padding: 12px; background: #1c222d; border-radius: 10px; text-align: center; font-size: 1.1rem; font-weight: bold; color: #00b4d8; word-break: break-all; }
+    #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; background: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
-
-  <!-- Top Header -->
-  <div class="header">
-    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <h2 id="tool-title">Standard Calculator</h2>
-    <div></div>
-  </div>
-
-  <!-- Sidebar Menu (18+ Tools) -->
+  <div class="header"><button class="menu-btn" onclick="toggleSidebar()">☰</button><h2 id="tool-title">Standard Calculator</h2><div></div></div>
   <div class="sidebar" id="sidebar">
     <h3>SELECT CALCULATOR</h3>
     <ul>
       <li onclick="switchTool('std', 'Standard Calculator')">1. Standard Calculator</li>
       <li onclick="switchTool('sci', 'Scientific Calculator')">2. Scientific Calculator</li>
       <li onclick="switchTool('numwords', 'Number to Words')">3. Number to Words</li>
-      <li onclick="switchTool('gst', 'GST / VAT Calculator')">4. GST Calculator</li>
+      <li onclick="switchTool('gst', 'GST Calculator')">4. GST Calculator</li>
       <li onclick="switchTool('discount', 'Discount Calculator')">5. Discount Calculator</li>
-      <li onclick="switchTool('bmi', 'BMI Health Calculator')">6. BMI Calculator</li>
+      <li onclick="switchTool('bmi', 'BMI Calculator')">6. BMI Calculator</li>
       <li onclick="switchTool('age', 'Age Calculator')">7. Age Calculator</li>
       <li onclick="switchTool('emi', 'Loan / EMI Calculator')">8. Loan / EMI Calculator</li>
       <li onclick="switchTool('percent', 'Percentage Calculator')">9. Percentage Calculator</li>
@@ -79,241 +58,77 @@
       <li onclick="switchTool('unit-speed', 'Speed Converter')">13. Speed Converter</li>
       <li onclick="switchTool('unit-area', 'Area Converter')">14. Area Converter</li>
       <li onclick="switchTool('unit-time', 'Time Converter')">15. Time Converter</li>
-      <li onclick="switchTool('unit-data', 'Data / Storage Converter')">16. Data Converter</li>
-      <li onclick="switchTool('fuel', 'Fuel Efficiency')">17. Fuel Mileage Calc</li>
-      <li onclick="switchTool('tip', 'Tip Splitter')">18. Tip Calculator</li>
+      <li onclick="switchTool('unit-data', 'Data Converter')">16. Data Converter</li>
+      <li onclick="switchTool('fuel', 'Fuel Mileage Calc')">17. Fuel Mileage Calc</li>
+      <li onclick="switchTool('tip', 'Tip Calculator')">18. Tip Calculator</li>
     </ul>
   </div>
-
   <div class="app-body">
-    
-    <!-- 1. STANDARD CALCULATOR -->
     <div id="std" class="tool-page active">
-      <div class="display-screen">
-        <div class="history" id="std-history"></div>
-        <div class="input-val" id="std-display">0</div>
-        <div class="word-val" id="std-words">Zero</div>
-      </div>
+      <div class="display-screen"><div class="history" id="std-history"></div><div class="input-val" id="std-display">0</div><div class="word-val" id="std-words">Zero</div></div>
       <div class="buttons">
-        <button class="btn btn-clear" onclick="clearStd()">C</button>
-        <button class="btn btn-op" onclick="appendStdOp('/')">÷</button>
-        <button class="btn btn-op" onclick="appendStdOp('*')">×</button>
-        <button class="btn btn-clear" onclick="delStd()">⌫</button>
-
-        <button class="btn" onclick="appendStd('7')">7</button>
-        <button class="btn" onclick="appendStd('8')">8</button>
-        <button class="btn" onclick="appendStd('9')">9</button>
-        <button class="btn btn-op" onclick="appendStdOp('-')">-</button>
-
-        <button class="btn" onclick="appendStd('4')">4</button>
-        <button class="btn" onclick="appendStd('5')">5</button>
-        <button class="btn" onclick="appendStd('6')">6</button>
-        <button class="btn btn-op" onclick="appendStdOp('+')">+</button>
-
-        <button class="btn" onclick="appendStd('1')">1</button>
-        <button class="btn" onclick="appendStd('2')">2</button>
-        <button class="btn" onclick="appendStd('3')">3</button>
-        <button class="btn btn-op" onclick="appendStdOp('%')">%</button>
-
-        <button class="btn" onclick="appendStd('0')">0</button>
-        <button class="btn" onclick="appendStd('00')">00</button>
-        <button class="btn" onclick="appendStd('.')">.</button>
-        <button class="btn btn-equal" onclick="calcStd()">=</button>
+        <button class="btn btn-clear" onclick="clearStd()">C</button><button class="btn btn-op" onclick="appendStdOp('/')">÷</button><button class="btn btn-op" onclick="appendStdOp('*')">×</button><button class="btn btn-clear" onclick="delStd()">⌫</button>
+        <button class="btn" onclick="appendStd('7')">7</button><button class="btn" onclick="appendStd('8')">8</button><button class="btn" onclick="appendStd('9')">9</button><button class="btn btn-op" onclick="appendStdOp('-')">-</button>
+        <button class="btn" onclick="appendStd('4')">4</button><button class="btn" onclick="appendStd('5')">5</button><button class="btn" onclick="appendStd('6')">6</button><button class="btn btn-op" onclick="appendStdOp('+')">+</button>
+        <button class="btn" onclick="appendStd('1')">1</button><button class="btn" onclick="appendStd('2')">2</button><button class="btn" onclick="appendStd('3')">3</button><button class="btn btn-op" onclick="appendStdOp('%')">%</button>
+        <button class="btn" onclick="appendStd('0')">0</button><button class="btn" onclick="appendStd('00')">00</button><button class="btn" onclick="appendStd('.')">.</button><button class="btn btn-equal" onclick="calcStd()">=</button>
       </div>
     </div>
-
-    <!-- 2. SCIENTIFIC CALCULATOR -->
-    <div id="sci" class="tool-page">
-      <div class="display-screen">
-        <div class="input-val" id="sci-display">0</div>
-      </div>
-      <div class="buttons">
-        <button class="btn btn-sci" onclick="sciOp('sin')">sin</button>
-        <button class="btn btn-sci" onclick="sciOp('cos')">cos</button>
-        <button class="btn btn-sci" onclick="sciOp('tan')">tan</button>
-        <button class="btn btn-sci" onclick="sciOp('log')">log</button>
-        
-        <button class="btn btn-sci" onclick="appendSci('3.14159')">π</button>
-        <button class="btn btn-sci" onclick="appendSci('**2')">x²</button>
-        <button class="btn btn-sci" onclick="sciOp('sqrt')">√</button>
-        <button class="btn btn-clear" onclick="clearSci()">C</button>
-
-        <button class="btn" onclick="appendSci('7')">7</button>
-        <button class="btn" onclick="appendSci('8')">8</button>
-        <button class="btn" onclick="appendSci('9')">9</button>
-        <button class="btn btn-op" onclick="appendSci('/')">÷</button>
-
-        <button class="btn" onclick="appendSci('4')">4</button>
-        <button class="btn" onclick="appendSci('5')">5</button>
-        <button class="btn" onclick="appendSci('6')">6</button>
-        <button class="btn btn-op" onclick="appendSci('*')">×</button>
-
-        <button class="btn" onclick="appendSci('1')">1</button>
-        <button class="btn" onclick="appendSci('2')">2</button>
-        <button class="btn" onclick="appendSci('3')">3</button>
-        <button class="btn btn-op" onclick="appendSci('-')">-</button>
-
-        <button class="btn" onclick="appendSci('0')">0</button>
-        <button class="btn" onclick="appendSci('.')">.</button>
-        <button class="btn btn-equal" style="grid-column: span 2;" onclick="calcSci()">=</button>
-      </div>
-    </div>
-
-    <!-- 3. GST CALCULATOR -->
-    <div id="gst" class="tool-page">
-      <div class="form-group"><label>Amount (₹)</label><input type="number" id="gst-amt" placeholder="1000"></div>
-      <div class="form-group"><label>GST Rate (%)</label>
-        <select id="gst-rate"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select>
-      </div>
-      <button class="calc-submit-btn" onclick="calcGST()">Calculate GST</button>
-      <div class="res-box" id="gst-res">Result Will Show Here</div>
-    </div>
-
-    <!-- 4. DISCOUNT CALCULATOR -->
-    <div id="discount" class="tool-page">
-      <div class="form-group"><label>Original Price (₹)</label><input type="number" id="disc-price" placeholder="500"></div>
-      <div class="form-group"><label>Discount (%)</label><input type="number" id="disc-percent" placeholder="20"></div>
-      <button class="calc-submit-btn" onclick="calcDiscount()">Calculate Final Price</button>
-      <div class="res-box" id="disc-res">Result Will Show Here</div>
-    </div>
-
-    <!-- 5. BMI CALCULATOR -->
-    <div id="bmi" class="tool-page">
-      <div class="form-group"><label>Weight (kg)</label><input type="number" id="bmi-weight" placeholder="65"></div>
-      <div class="form-group"><label>Height (cm)</label><input type="number" id="bmi-height" placeholder="170"></div>
-      <button class="calc-submit-btn" onclick="calcBMI()">Calculate BMI</button>
-      <div class="res-box" id="bmi-res">Result Will Show Here</div>
-    </div>
-
-    <!-- 6. AGE CALCULATOR -->
-    <div id="age" class="tool-page">
-      <div class="form-group"><label>Date of Birth</label><input type="date" id="dob"></div>
-      <button class="calc-submit-btn" onclick="calcAge()">Calculate Age</button>
-      <div class="res-box" id="age-res">Result Will Show Here</div>
-    </div>
-
-    <!-- OTHER GENERIC CONVERTER PLACEHOLDER -->
-    <div id="unit-len" class="tool-page">
-      <div class="form-group"><label>Meters (m)</label><input type="number" id="len-m" oninput="convertLen()" placeholder="Enter length"></div>
-      <div class="res-box" id="len-res">0 km | 0 cm | 0 Feet</div>
-    </div>
-
-    <div id="numwords" class="tool-page">
-      <div class="form-group"><label>Enter Any Number</label><input type="number" id="nw-input" oninput="convertNW()" placeholder="Type 1250"></div>
-      <div class="res-box" id="nw-res">Zero</div>
-    </div>
-
+    <div id="sci" class="tool-page"><div class="display-screen"><div class="input-val" id="sci-display">0</div></div><div class="buttons"><button class="btn btn-sci" onclick="sciOp('sin')">sin</button><button class="btn btn-sci" onclick="sciOp('cos')">cos</button><button class="btn btn-sci" onclick="sciOp('tan')">tan</button><button class="btn btn-sci" onclick="sciOp('log')">log</button><button class="btn btn-sci" onclick="appendSci('3.14159')">π</button><button class="btn btn-sci" onclick="appendSci('**2')">x²</button><button class="btn btn-sci" onclick="sciOp('sqrt')">√</button><button class="btn btn-clear" onclick="clearSci()">C</button><button class="btn" onclick="appendSci('7')">7</button><button class="btn" onclick="appendSci('8')">8</button><button class="btn" onclick="appendSci('9')">9</button><button class="btn btn-op" onclick="appendSci('/')">÷</button><button class="btn" onclick="appendSci('4')">4</button><button class="btn" onclick="appendSci('5')">5</button><button class="btn" onclick="appendSci('6')">6</button><button class="btn btn-op" onclick="appendSci('*')">×</button><button class="btn" onclick="appendSci('1')">1</button><button class="btn" onclick="appendSci('2')">2</button><button class="btn" onclick="appendSci('3')">3</button><button class="btn btn-op" onclick="appendSci('-')">-</button><button class="btn" onclick="appendSci('0')">0</button><button class="btn" onclick="appendSci('.')">.</button><button class="btn btn-equal" style="grid-column: span 2;" onclick="calcSci()">=</button></div></div>
+    <div id="numwords" class="tool-page"><div class="form-group"><label>Enter Number</label><input type="number" id="nw-input" oninput="convertNW()" placeholder="1250"></div><div class="res-box" id="nw-res">Zero</div></div>
+    <div id="gst" class="tool-page"><div class="form-group"><label>Amount (₹)</label><input type="number" id="gst-amt" placeholder="1000"></div><div class="form-group"><label>GST Rate (%)</label><select id="gst-rate"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div><button class="calc-submit-btn" onclick="calcGST()">Calculate GST</button><div class="res-box" id="gst-res">Result</div></div>
+    <div id="discount" class="tool-page"><div class="form-group"><label>Original Price (₹)</label><input type="number" id="disc-price" placeholder="500"></div><div class="form-group"><label>Discount (%)</label><input type="number" id="disc-percent" placeholder="20"></div><button class="calc-submit-btn" onclick="calcDiscount()">Calculate</button><div class="res-box" id="disc-res">Result</div></div>
+    <div id="bmi" class="tool-page"><div class="form-group"><label>Weight (kg)</label><input type="number" id="bmi-w" placeholder="65"></div><div class="form-group"><label>Height (cm)</label><input type="number" id="bmi-h" placeholder="170"></div><button class="calc-submit-btn" onclick="calcBMI()">Calculate BMI</button><div class="res-box" id="bmi-res">Result</div></div>
+    <div id="age" class="tool-page"><div class="form-group"><label>Date of Birth</label><input type="date" id="dob"></div><button class="calc-submit-btn" onclick="calcAge()">Calculate Age</button><div class="res-box" id="age-res">Result</div></div>
+    <div id="emi" class="tool-page"><div class="form-group"><label>Loan Amount (₹)</label><input type="number" id="emi-p" placeholder="100000"></div><div class="form-group"><label>Interest Rate (%)</label><input type="number" id="emi-r" placeholder="10"></div><div class="form-group"><label>Tenure (Months)</label><input type="number" id="emi-m" placeholder="12"></div><button class="calc-submit-btn" onclick="calcEMI()">Calculate Monthly EMI</button><div class="res-box" id="emi-res">Result</div></div>
+    <div id="percent" class="tool-page"><div class="form-group"><label>What is</label><input type="number" id="p-val" placeholder="20"></div><div class="form-group"><label>% Of</label><input type="number" id="p-tot" placeholder="500"></div><button class="calc-submit-btn" onclick="calcPercent()">Calculate</button><div class="res-box" id="p-res">Result</div></div>
+    <div id="unit-len" class="tool-page"><div class="form-group"><label>Meters (m)</label><input type="number" id="len-m" oninput="convertLen()" placeholder="100"></div><div class="res-box" id="len-res">0 km | 0 cm | 0 Ft</div></div>
+    <div id="unit-wt" class="tool-page"><div class="form-group"><label>Kilograms (kg)</label><input type="number" id="wt-kg" oninput="convertWt()" placeholder="50"></div><div class="res-box" id="wt-res">0 Grams | 0 Pounds</div></div>
+    <div id="unit-temp" class="tool-page"><div class="form-group"><label>Celsius (°C)</label><input type="number" id="temp-c" oninput="convertTemp()" placeholder="37"></div><div class="res-box" id="temp-res">0 °F | 0 K</div></div>
+    <div id="unit-speed" class="tool-page"><div class="form-group"><label>KM / Hour</label><input type="number" id="spd-km" oninput="convertSpeed()" placeholder="60"></div><div class="res-box" id="spd-res">0 Miles/Hr | 0 Meter/Sec</div></div>
+    <div id="unit-area" class="tool-page"><div class="form-group"><label>Square Meters (sq m)</label><input type="number" id="area-m" oninput="convertArea()" placeholder="100"></div><div class="res-box" id="area-res">0 Sq Feet | 0 Acre</div></div>
+    <div id="unit-time" class="tool-page"><div class="form-group"><label>Hours</label><input type="number" id="time-h" oninput="convertTime()" placeholder="2"></div><div class="res-box" id="time-res">0 Minutes | 0 Seconds</div></div>
+    <div id="unit-data" class="tool-page"><div class="form-group"><label>Gigabytes (GB)</label><input type="number" id="data-gb" oninput="convertData()" placeholder="1"></div><div class="res-box" id="data-res">0 MB | 0 KB</div></div>
+    <div id="fuel" class="tool-page"><div class="form-group"><label>Distance (KM)</label><input type="number" id="fuel-d" placeholder="100"></div><div class="form-group"><label>Fuel Used (Liters)</label><input type="number" id="fuel-l" placeholder="5"></div><button class="calc-submit-btn" onclick="calcFuel()">Calculate Mileage</button><div class="res-box" id="fuel-res">Result</div></div>
+    <div id="tip" class="tool-page"><div class="form-group"><label>Bill Amount (₹)</label><input type="number" id="tip-b" placeholder="1000"></div><div class="form-group"><label>Number of People</label><input type="number" id="tip-p" placeholder="4"></div><button class="calc-submit-btn" onclick="calcTip()">Calculate Per Person</button><div class="res-box" id="tip-res">Result</div></div>
   </div>
-
-  <!-- Adsterra 320x50 Banner Code Included -->
   <div id="ad-container">
     <script type="text/javascript">
       atOptions = { 'key' : 'bd2b6f488661ebbe01d2c94d03df6b31', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
     </script>
-    <script type="text/javascript" src="//www.highperformanceformat.com/bd2b6f488661ebbe01d2c94d03df6b31/invoke.js"></script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/bd2b6f488661ebbe01d2c94d03df6b31/invoke.js"></script>
   </div>
-
   <script>
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-
-    function switchTool(toolId, title) {
-      document.querySelectorAll('.tool-page').forEach(el => el.classList.remove('active'));
-      document.getElementById(toolId).classList.add('active');
-      document.getElementById('tool-title').innerText = title;
-      toggleSidebar();
-    }
-
-    /* Standard Calc Logic */
-    let sDisp = document.getElementById('std-display');
-    let sHist = document.getElementById('std-history');
-    let sWords = document.getElementById('std-words');
-
+    function switchTool(toolId, title) { document.querySelectorAll('.tool-page').forEach(el => el.classList.remove('active')); document.getElementById(toolId).classList.add('active'); document.getElementById('tool-title').innerText = title; toggleSidebar(); }
+    let sDisp = document.getElementById('std-display'), sHist = document.getElementById('std-history'), sWords = document.getElementById('std-words');
     function appendStd(n) { if (sDisp.innerText === '0') sDisp.innerText = n; else sDisp.innerText += n; updateWords(); }
     function appendStdOp(op) { sDisp.innerText += op; }
     function clearStd() { sDisp.innerText = '0'; sHist.innerText = ''; sWords.innerText = 'Zero'; }
     function delStd() { sDisp.innerText = sDisp.innerText.slice(0, -1) || '0'; updateWords(); }
-    function calcStd() {
-      try {
-        sHist.innerText = sDisp.innerText;
-        let r = eval(sDisp.innerText.replace(/×/g, '*').replace(/÷/g, '/'));
-        sDisp.innerText = r; updateWords();
-      } catch(e) { sDisp.innerText = 'Error'; }
-    }
-
-    /* Scientific Calc Logic */
+    function calcStd() { try { sHist.innerText = sDisp.innerText; let r = eval(sDisp.innerText.replace(/×/g, '*').replace(/÷/g, '/')); sDisp.innerText = r; updateWords(); } catch(e) { sDisp.innerText = 'Error'; } }
     let scDisp = document.getElementById('sci-display');
     function appendSci(n) { if (scDisp.innerText === '0') scDisp.innerText = n; else scDisp.innerText += n; }
     function clearSci() { scDisp.innerText = '0'; }
-    function sciOp(f) {
-      let v = parseFloat(scDisp.innerText);
-      if(f==='sin') scDisp.innerText = Math.sin(v).toFixed(4);
-      if(f==='cos') scDisp.innerText = Math.cos(v).toFixed(4);
-      if(f==='tan') scDisp.innerText = Math.tan(v).toFixed(4);
-      if(f==='log') scDisp.innerText = Math.log10(v).toFixed(4);
-      if(f==='sqrt') scDisp.innerText = Math.sqrt(v).toFixed(4);
-    }
+    function sciOp(f) { let v = parseFloat(scDisp.innerText); if(f==='sin') scDisp.innerText = Math.sin(v).toFixed(4); if(f==='cos') scDisp.innerText = Math.cos(v).toFixed(4); if(f==='tan') scDisp.innerText = Math.tan(v).toFixed(4); if(f==='log') scDisp.innerText = Math.log10(v).toFixed(4); if(f==='sqrt') scDisp.innerText = Math.sqrt(v).toFixed(4); }
     function calcSci() { try { scDisp.innerText = eval(scDisp.innerText); } catch(e){ scDisp.innerText='Error';} }
-
-    /* GST Logic */
-    function calcGST() {
-      let a = parseFloat(document.getElementById('gst-amt').value) || 0;
-      let r = parseFloat(document.getElementById('gst-rate').value) || 0;
-      let gst = (a * r) / 100;
-      document.getElementById('gst-res').innerText = `GST: ₹${gst.toFixed(2)} | Total: ₹${(a+gst).toFixed(2)}`;
-    }
-
-    /* Discount Logic */
-    function calcDiscount() {
-      let p = parseFloat(document.getElementById('disc-price').value) || 0;
-      let d = parseFloat(document.getElementById('disc-percent').value) || 0;
-      let save = (p * d) / 100;
-      document.getElementById('disc-res').innerText = `You Save: ₹${save.toFixed(2)} | Pay: ₹${(p - save).toFixed(2)}`;
-    }
-
-    /* BMI Logic */
-    function calcBMI() {
-      let w = parseFloat(document.getElementById('bmi-weight').value);
-      let h = parseFloat(document.getElementById('bmi-height').value) / 100;
-      if(w && h) {
-        let bmi = (w / (h*h)).toFixed(1);
-        document.getElementById('bmi-res').innerText = `BMI Score: ${bmi}`;
-      }
-    }
-
-    /* Age Logic */
-    function calcAge() {
-      let dob = new Date(document.getElementById('dob').value);
-      if(dob) {
-        let diff = new Date(Date.now() - dob.getTime());
-        document.getElementById('age-res').innerText = `Age: ${Math.abs(diff.getUTCFullYear() - 1970)} Years Old`;
-      }
-    }
-
-    /* Length Convert Logic */
-    function convertLen() {
-      let m = parseFloat(document.getElementById('len-m').value) || 0;
-      document.getElementById('len-res').innerText = `${(m/1000).toFixed(2)} km | ${m*100} cm | ${(m*3.28084).toFixed(2)} Ft`;
-    }
-
-    /* Number to Words Logic */
-    function updateWords() {
-      let val = parseFloat(sDisp.innerText);
-      if (!isNaN(val) && val < 100000000) sWords.innerText = inWords(val);
-    }
-    function convertNW() {
-      let v = parseFloat(document.getElementById('nw-input').value) || 0;
-      document.getElementById('nw-res').innerText = inWords(v);
-    }
-    function inWords(n) {
-      if (n === 0) return 'Zero';
-      const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-      const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-      if (n < 20) return a[n];
-      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '');
-      if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred ' + (n % 100 ? inWords(n % 100) : '');
-      if (n < 100000) return inWords(Math.floor(n / 1000)) + ' Thousand ' + (n % 1000 ? inWords(n % 1000) : '');
-      return inWords(Math.floor(n / 100000)) + ' Lakh ' + (n % 100000 ? inWords(n % 100000) : '');
-    }
+    function convertNW() { document.getElementById('nw-res').innerText = inWords(parseFloat(document.getElementById('nw-input').value) || 0); }
+    function calcGST() { let a=parseFloat(document.getElementById('gst-amt').value)||0, r=parseFloat(document.getElementById('gst-rate').value)||0, g=(a*r)/100; document.getElementById('gst-res').innerText=`GST: ₹${g.toFixed(2)} | Total: ₹${(a+g).toFixed(2)}`; }
+    function calcDiscount() { let p=parseFloat(document.getElementById('disc-price').value)||0, d=parseFloat(document.getElementById('disc-percent').value)||0, s=(p*d)/100; document.getElementById('disc-res').innerText=`Save: ₹${s.toFixed(2)} | Pay: ₹${(p-s).toFixed(2)}`; }
+    function calcBMI() { let w=parseFloat(document.getElementById('bmi-w').value), h=parseFloat(document.getElementById('bmi-h').value)/100; if(w&&h) document.getElementById('bmi-res').innerText=`BMI: ${(w/(h*h)).toFixed(1)}`; }
+    function calcAge() { let d=new Date(document.getElementById('dob').value); if(d) document.getElementById('age-res').innerText=`Age: ${Math.abs(new Date(Date.now()-d.getTime()).getUTCFullYear()-1970)} Years`; }
+    function calcEMI() { let p=parseFloat(document.getElementById('emi-p').value)||0, r=(parseFloat(document.getElementById('emi-r').value)||0)/1200, n=parseFloat(document.getElementById('emi-m').value)||0; if(p&&r&&n){ let emi=(p*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1); document.getElementById('emi-res').innerText=`Monthly EMI: ₹${emi.toFixed(2)}`; } }
+    function calcPercent() { let v=parseFloat(document.getElementById('p-val').value)||0, t=parseFloat(document.getElementById('p-tot').value)||0; document.getElementById('p-res').innerText=`Result: ${(v*t)/100}`; }
+    function convertLen() { let m=parseFloat(document.getElementById('len-m').value)||0; document.getElementById('len-res').innerText=`${(m/1000).toFixed(2)} km | ${m*100} cm | ${(m*3.28084).toFixed(2)} Ft`; }
+    function convertWt() { let k=parseFloat(document.getElementById('wt-kg').value)||0; document.getElementById('wt-res').innerText=`${k*1000} Grams | ${(k*2.20462).toFixed(2)} lbs`; }
+    function convertTemp() { let c=parseFloat(document.getElementById('temp-c').value)||0; document.getElementById('temp-res').innerText=`${(c*9/5)+32} °F | ${c+273.15} K`; }
+    function convertSpeed() { let k=parseFloat(document.getElementById('spd-km').value)||0; document.getElementById('spd-res').innerText=`${(k*0.621371).toFixed(2)} mph | ${(k/3.6).toFixed(2)} m/s`; }
+    function convertArea() { let m=parseFloat(document.getElementById('area-m').value)||0; document.getElementById('area-res').innerText=`${(m*10.7639).toFixed(2)} Sq Ft | ${(m/4046.86).toFixed(4)} Acre`; }
+    function convertTime() { let h=parseFloat(document.getElementById('time-h').value)||0; document.getElementById('time-res').innerText=`${h*60} Mins | ${h*3600} Secs`; }
+    function convertData() { let g=parseFloat(document.getElementById('data-gb').value)||0; document.getElementById('data-res').innerText=`${g*1024} MB | ${g*1048576} KB`; }
+    function calcFuel() { let d=parseFloat(document.getElementById('fuel-d').value)||0, l=parseFloat(document.getElementById('fuel-l').value)||0; if(d&&l) document.getElementById('fuel-res').innerText=`Mileage: ${(d/l).toFixed(2)} KM/Liter`; }
+    function calcTip() { let b=parseFloat(document.getElementById('tip-b').value)||0, p=parseFloat(document.getElementById('tip-p').value)||1; document.getElementById('tip-res').innerText=`Each Pays: ₹${(b/p).toFixed(2)}`; }
+    function updateWords() { let v=parseFloat(sDisp.innerText); if (!isNaN(v)&&v<100000000) sWords.innerText=inWords(v); }
+    function inWords(n) { if (n === 0) return 'Zero'; const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen']; const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety']; if(n<20) return a[n]; if(n<100) return b[Math.floor(n/10)]+(n%10?' '+a[n%10]:''); if(n<1000) return a[Math.floor(n/100)]+' Hundred '+(n%100?inWords(n%100):''); if(n<100000) return inWords(Math.floor(n/1000))+' Thousand '+(n%1000?inWords(n%1000):''); return inWords(Math.floor(n/100000))+' Lakh '+(n%100000?inWords(n%100000):''); }
   </script>
-</body>
-</html>
+                                                                                               </body>
