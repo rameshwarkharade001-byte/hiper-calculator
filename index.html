@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculator Pro - Master Edition</title>
+  <link rel="manifest" href="manifest.json">
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
@@ -240,5 +241,11 @@
 
   <!-- ACTIVE SOCIAL BAR AD -->
   <script src="https://pl30790893.effectivecpmnetwork.com/e0/d9/e1/e0d9e140d2a95360f9f664cd9cdfcc54.js"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+  </script>
+  
 </body>
 </html>
