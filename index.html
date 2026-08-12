@@ -5,63 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculator Pro</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: #121212; color: #ffffff; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; overflow: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #121318; color: #ffffff; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; overflow: hidden; }
     
     /* Calculator Container */
-    .calculator { display: flex; flex-direction: column; height: calc(100vh - 60px); padding: 15px; }
+    .calculator { display: flex; flex-direction: column; height: calc(100vh - 50px); padding: 20px; justify-content: flex-end; }
     
-    /* Display Screen */
-    .display-screen { background: #1e1e1e; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; flex: 1; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-    .history { font-size: 1.1rem; color: #a5a5a5; min-height: 24px; word-break: break-all; }
-    .input-val { font-size: 2.5rem; font-weight: bold; margin-top: 5px; word-break: break-all; }
-    .word-val { font-size: 0.9rem; color: #00adb5; margin-top: 5px; font-weight: 500; text-align: right; }
+    /* Display Area */
+    .display-screen { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding: 10px 10px 20px 10px; text-align: right; word-break: break-all; min-height: 140px; }
+    .history { font-size: 1.3rem; color: #8a8d9b; min-height: 30px; font-weight: 400; }
+    .input-val { font-size: 3.2rem; font-weight: 700; color: #ffffff; line-height: 1.2; margin-top: 5px; }
 
     /* Keypad Grid */
-    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    button { background: #2d2d2d; border: none; outline: none; border-radius: 16px; font-size: 1.5rem; color: #fff; padding: 18px 0; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-    button:active { background: #3d3d3d; transform: scale(0.95); }
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    button { background: #23272f; border: none; outline: none; border-radius: 20px; font-size: 1.6rem; color: #ffffff; height: 68px; font-weight: 500; cursor: pointer; transition: background 0.15s ease, transform 0.1s ease; display: flex; align-items: center; justify-content: center; }
+    button:active { background: #323846; transform: scale(0.95); }
     
-    /* Special Button Colors */
-    .btn-operator { color: #00adb5; background: #222831; }
-    .btn-action { color: #ff5722; background: #222831; }
-    .btn-equal { background: #00adb5; color: #fff; grid-column: span 2; border-radius: 16px; }
+    /* Button Colors */
+    .btn-clear { color: #ff6b4a; background: #1c222d; font-weight: 600; }
+    .btn-op { color: #00b4d8; background: #1c222d; font-size: 1.8rem; }
+    .btn-back { color: #ff6b4a; background: #1c222d; }
+    .btn-equal { background: #00b4d8; color: #ffffff; font-size: 2rem; font-weight: 600; }
 
     /* Bottom Fixed Banner Ad Container */
-    #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; background: #000000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
 
   <div class="calculator">
-    <!-- Screen -->
+    <!-- Display -->
     <div class="display-screen">
       <div class="history" id="history"></div>
       <div class="input-val" id="display">0</div>
-      <div class="word-val" id="words">Zero</div>
     </div>
 
-    <!-- Buttons -->
+    <!-- Buttons Grid -->
     <div class="buttons">
-      <button class="btn-action" onclick="clearDisplay()">C</button>
-      <button class="btn-operator" onclick="appendOp('/')">÷</button>
-      <button class="btn-operator" onclick="appendOp('*')">×</button>
-      <button class="btn-action" onclick="deleteLast()">⌫</button>
+      <button class="btn-clear" onclick="clearDisplay()">C</button>
+      <button class="btn-op" onclick="appendOp('/')">÷</button>
+      <button class="btn-op" onclick="appendOp('*')">×</button>
+      <button class="btn-back" onclick="deleteLast()">⌫</button>
 
       <button onclick="appendNum('7')">7</button>
       <button onclick="appendNum('8')">8</button>
       <button onclick="appendNum('9')">9</button>
-      <button class="btn-operator" onclick="appendOp('-')">-</button>
+      <button class="btn-op" onclick="appendOp('-')">-</button>
 
       <button onclick="appendNum('4')">4</button>
       <button onclick="appendNum('5')">5</button>
       <button onclick="appendNum('6')">6</button>
-      <button class="btn-operator" onclick="appendOp('+')">+</button>
+      <button class="btn-op" onclick="appendOp('+')">+</button>
 
       <button onclick="appendNum('1')">1</button>
       <button onclick="appendNum('2')">2</button>
       <button onclick="appendNum('3')">3</button>
-      <button class="btn-operator" onclick="appendOp('%')">%</button>
+      <button class="btn-op" onclick="appendOp('%')">%</button>
 
       <button onclick="appendNum('0')">0</button>
       <button onclick="appendNum('00')">00</button>
@@ -87,18 +86,17 @@
   <script>
     let display = document.getElementById('display');
     let history = document.getElementById('history');
-    let words = document.getElementById('words');
 
     function appendNum(num) {
-      if (display.innerText === '0') {
+      if (display.innerText === '0' || display.innerText === 'Error') {
         display.innerText = num;
       } else {
         display.innerText += num;
       }
-      updateWords();
     }
 
     function appendOp(op) {
+      if (display.innerText === 'Error') return;
       let lastChar = display.innerText.slice(-1);
       if (['+', '-', '*', '/', '%'].includes(lastChar)) {
         display.innerText = display.innerText.slice(0, -1) + op;
@@ -110,7 +108,6 @@
     function clearDisplay() {
       display.innerText = '0';
       history.innerText = '';
-      words.innerText = 'Zero';
     }
 
     function deleteLast() {
@@ -119,45 +116,21 @@
       } else {
         display.innerText = display.innerText.slice(0, -1);
       }
-      updateWords();
     }
 
     function calculate() {
       try {
         history.innerText = display.innerText;
-        let result = eval(display.innerText.replace(/×/g, '*').replace(/÷/g, '/'));
-        display.innerText = result;
-        updateWords();
+        let expr = display.innerText.replace(/×/g, '*').replace(/÷/g, '/');
+        
+        // Handle percentage calculation correctly
+        expr = expr.replace(/(\d+)%/g, '($1/100)');
+
+        let result = eval(expr);
+        display.innerText = Number.isInteger(result) ? result : parseFloat(result.toFixed(8));
       } catch (e) {
         display.innerText = 'Error';
-        words.innerText = '';
       }
-    }
-
-    function updateWords() {
-      let val = parseFloat(display.innerText);
-      if (!isNaN(val) && isFinite(val) && val < 1000000000) {
-        words.innerText = numberToWords(val);
-      } else {
-        words.innerText = '';
-      }
-    }
-
-    function numberToWords(num) {
-      if (num === 0) return 'Zero';
-      const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-      const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-      
-      function inWords(n) {
-        if (n < 20) return a[n];
-        let digit = n % 10;
-        if (n < 100) return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit] : '');
-        if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' + inWords(n % 100) : '');
-        if (n < 100000) return inWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 ? ' ' + inWords(n % 1000) : '');
-        if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 ? ' ' + inWords(n % 100000) : '');
-        return inWords(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 ? ' ' + inWords(n % 10000000) : '');
-      }
-      return inWords(num);
     }
   </script>
 </body>
