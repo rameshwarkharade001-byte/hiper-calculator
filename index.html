@@ -25,8 +25,8 @@
     .sidebar { position: fixed; top: 0; left: -290px; width: 270px; height: 100%; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(16px); z-index: 10000; transition: 0.3s ease; padding: 18px 14px; overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.1); }
     .sidebar.active { left: 0; }
     .sidebar-menu-top { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px; }
-    .sidebar-menu-top div { padding: 10px 12px; font-weight: 600; color: #fff; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
-    .sidebar-menu-top div:hover { background: rgba(255,255,255,0.05); }
+    .sidebar-menu-top div { padding: 10px 12px; font-weight: 600; color: #fff; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .sidebar-menu-top div:hover { background: rgba(255,255,255,0.08); }
     .sidebar-section-title { font-size: 0.78rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.8px; margin: 14px 0 8px 6px; }
     .sidebar ul { list-style: none; }
     .sidebar li { padding: 10px 12px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; cursor: pointer; font-size: 0.88rem; }
@@ -56,6 +56,11 @@
     .calc-submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); border: none; border-radius: 14px; color: #fff; font-size: 1.05rem; font-weight: 700; cursor: pointer; margin-top: 8px; }
     .res-box { margin-top: 14px; padding: 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--accent-color); word-break: break-all; }
     
+    .setting-cat { font-size: 0.8rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; margin: 16px 0 8px 4px; }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
+    .setting-row label { font-size: 0.92rem; color: #fff; margin: 0; }
+    .setting-row sub { display: block; font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
+
     .help-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px 14px; border-radius: 12px; margin-bottom: 10px; font-size: 0.88rem; color: #e2e8f0; line-height: 1.4; }
 
     #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; background: #000000; z-index: 99999; display: flex; justify-content: center; align-items: center; overflow: hidden; border-top: 1px solid rgba(255,255,255,0.1); }
@@ -108,7 +113,6 @@
   </div>
 
   <div class="app-body">
-    <!-- Calculator Pages -->
     <div id="std" class="tool-page active">
       <div class="display-screen" onclick="copyResult('std-display')">
         <span class="copy-toast" id="copy-toast">Copied!</span>
@@ -125,13 +129,26 @@
       </div>
     </div>
 
-    <!-- Settings Page -->
+    <!-- CLEAN SETTINGS PAGE -->
     <div id="settings" class="tool-page">
-      <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:14px; border-radius:12px;">
-        <label style="margin:0; font-size:1rem; color:#fff;">Button Vibration</label>
-        <input type="checkbox" id="vib-toggle" checked style="width:20px; height:20px;">
+      <div class="setting-cat">General Details</div>
+      <div class="setting-row">
+        <div><label>Button Feedback</label><sub>Vibration on keypress</sub></div>
+        <input type="checkbox" id="vib-toggle" checked style="width:18px; height:18px;">
       </div>
-      <div class="res-box" style="margin-top:20px;">Calculator Pro v2.0 - Premium Edition</div>
+      <div class="setting-row">
+        <div><label>Keep Screen On</label><sub>Always keep the screen active</sub></div>
+        <input type="checkbox" id="screen-toggle" style="width:18px; height:18px;">
+      </div>
+      <div class="setting-row">
+        <div><label>Keep Calculation Record</label><sub>Save last history record</sub></div>
+        <input type="checkbox" id="record-toggle" checked style="width:18px; height:18px;">
+      </div>
+
+      <div class="setting-cat">Information</div>
+      <div class="setting-row">
+        <div><label>About Calculator Pro</label><sub>Version 2.24.13 (Pro Edition)</sub></div>
+      </div>
     </div>
 
     <!-- Help Page -->
@@ -162,7 +179,6 @@
     <div id="tip" class="tool-page"><div class="form-group"><label>Bill Amount (₹)</label><input type="number" id="tip-b" placeholder="1000"></div><div class="form-group"><label>Number of People</label><input type="number" id="tip-p" placeholder="4"></div><button class="calc-submit-btn" onclick="calcTip()">Calculate Per Person</button><div class="res-box" id="tip-res">Result</div></div>
   </div>
 
-  <!-- FIXED 320x50 BANNER AD -->
   <div id="ad-container">
     <script type="text/javascript">
       atOptions = {
@@ -179,8 +195,8 @@
   <script>
     function vib() { var t = document.getElementById('vib-toggle'); if ((!t || t.checked) && navigator.vibrate) navigator.vibrate(20); }
     function toggleSidebar() { vib(); document.getElementById('sidebar').classList.toggle('active'); }
-    function switchTool(tId, title) { vib(); var p = document.querySelectorAll('.tool-page'); for(var i=0; i<p.length; i++){ p[i].classList.remove('active'); } document.getElementById(tId).classList.add('active'); document.getElementById('tool-title').innerText = title; document.getElementById('sidebar').classList.remove('active'); }
-    
+    .innerText = title; document.getElementById('sidebar').classList.remove('active'); }
+
     function copyResult(id) {
       var val = document.getElementById(id).innerText;
       navigator.clipboard.writeText(val);
@@ -194,7 +210,7 @@
     function rateApp() { vib(); alert('Thank you for using Calculator Pro! Please give us 5 Stars on Play Store!'); }
 
     var sDisp = document.getElementById('std-display'), sHist = document.getElementById('std-history'), sWords = document.getElementById('std-words');
-        function appendStd(n) { vib(); if (sDisp.innerText === '0') sDisp.innerText = n; else sDisp.innerText += n; updateWords(); }
+    function appendStd(n) { vib(); if (sDisp.innerText === '0') sDisp.innerText = n; else sDisp.innerText += n; updateWords(); }
     function appendStdOp(op) { vib(); sDisp.innerText += op; }
     function clearStd() { vib(); sDisp.innerText = '0'; sHist.innerText = ''; sWords.innerText = 'Zero'; }
     function delStd() { vib(); sDisp.innerText = sDisp.innerText.slice(0, -1) || '0'; updateWords(); }
@@ -232,3 +248,4 @@
   <script src="https://pl30790893.effectivecpmnetwork.com/e0/d9/e1/e0d9e140d2a95360f9f664cd9cdfcc54.js"></script>
 </body>
 </html>
+
