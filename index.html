@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator Pro - Ultimate Edition</title>
+  <title>Calculator Pro - Master Edition</title>
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
@@ -21,11 +21,15 @@
     .header-btns { display: flex; gap: 8px; }
     .head-icon-btn { background: rgba(255,255,255,0.08); border: none; color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
 
-    .sidebar { position: fixed; top: 0; left: -290px; width: 270px; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); z-index: 10000; transition: 0.3s ease; padding: 22px 16px; overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.1); }
+    /* ClevCalc Style Sidebar */
+    .sidebar { position: fixed; top: 0; left: -290px; width: 270px; height: 100%; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(16px); z-index: 10000; transition: 0.3s ease; padding: 18px 14px; overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.1); }
     .sidebar.active { left: 0; }
-    .sidebar h3 { color: var(--accent-color); margin-bottom: 18px; font-size: 0.95rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .sidebar-menu-top { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px; }
+    .sidebar-menu-top div { padding: 10px 12px; font-weight: 600; color: #fff; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
+    .sidebar-menu-top div:hover { background: rgba(255,255,255,0.05); }
+    .sidebar-section-title { font-size: 0.78rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.8px; margin: 14px 0 8px 6px; }
     .sidebar ul { list-style: none; }
-    .sidebar li { padding: 12px 14px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; cursor: pointer; font-size: 0.9rem; }
+    .sidebar li { padding: 10px 12px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; cursor: pointer; font-size: 0.88rem; }
     .sidebar li:hover { background: var(--accent-color); color: #000; font-weight: 600; }
 
     .app-body { flex: 1; display: flex; flex-direction: column; padding: 16px; padding-bottom: 65px; overflow-y: auto; }
@@ -52,6 +56,8 @@
     .calc-submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); border: none; border-radius: 14px; color: #fff; font-size: 1.05rem; font-weight: 700; cursor: pointer; margin-top: 8px; }
     .res-box { margin-top: 14px; padding: 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--accent-color); word-break: break-all; }
     
+    .help-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px 14px; border-radius: 12px; margin-bottom: 10px; font-size: 0.88rem; color: #e2e8f0; line-height: 1.4; }
+
     #ad-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; background: #000000; z-index: 99999; display: flex; justify-content: center; align-items: center; overflow: hidden; border-top: 1px solid rgba(255,255,255,0.1); }
   </style>
 </head>
@@ -67,32 +73,42 @@
   </div>
 
   <div class="sidebar" id="sidebar">
-    <h3>SELECT CALCULATOR</h3>
+    <div class="sidebar-menu-top">
+      <div onclick="switchTool('settings', 'Settings')">⚙️ Settings</div>
+      <div onclick="switchTool('help', 'Help & Tips')">❓ Help</div>
+    </div>
+
+    <div class="sidebar-section-title">FAVOURITES</div>
     <ul>
-      <li onclick="switchTool('std', 'Standard Calculator')">1. Standard Calculator</li>
-      <li onclick="switchTool('sci', 'Scientific Calculator')">2. Scientific Calculator</li>
-      <li onclick="switchTool('currency', 'Currency Converter')">3. Currency Converter</li>
-      <li onclick="switchTool('interest', 'Simple & Compound Interest')">4. Interest Calculator</li>
-      <li onclick="switchTool('numwords', 'Number to Words')">5. Number to Words</li>
-      <li onclick="switchTool('gst', 'GST Calculator')">6. GST Calculator</li>
-      <li onclick="switchTool('discount', 'Discount Calculator')">7. Discount Calculator</li>
-      <li onclick="switchTool('bmi', 'BMI Calculator')">8. BMI Calculator</li>
-      <li onclick="switchTool('age', 'Age Calculator')">9. Age Calculator</li>
-      <li onclick="switchTool('emi', 'Loan / EMI Calculator')">10. Loan / EMI Calculator</li>
-      <li onclick="switchTool('percent', 'Percentage Calculator')">11. Percentage Calculator</li>
-      <li onclick="switchTool('unit-len', 'Length Converter')">12. Length Converter</li>
-      <li onclick="switchTool('unit-wt', 'Weight Converter')">13. Weight Converter</li>
-      <li onclick="switchTool('unit-temp', 'Temperature Converter')">14. Temperature Converter</li>
-      <li onclick="switchTool('unit-speed', 'Speed Converter')">15. Speed Converter</li>
-      <li onclick="switchTool('unit-area', 'Area Converter')">16. Area Converter</li>
-      <li onclick="switchTool('unit-time', 'Time Converter')">17. Time Converter</li>
-      <li onclick="switchTool('unit-data', 'Data Converter')">18. Data Converter</li>
-      <li onclick="switchTool('fuel', 'Fuel Mileage Calc')">19. Fuel Mileage Calc</li>
-      <li onclick="switchTool('tip', 'Tip Calculator')">20. Tip Calculator</li>
+      <li onclick="switchTool('std', 'Standard Calculator')">Calculator</li>
+      <li onclick="switchTool('currency', 'Currency Converter')">Currencies</li>
+      <li onclick="switchTool('unit-len', 'Length Converter')">Units</li>
+      <li onclick="switchTool('discount', 'Discount Calculator')">Discount</li>
+      <li onclick="switchTool('percent', 'Percentage Calculator')">Percentage</li>
+    </ul>
+
+    <div class="sidebar-section-title">ALL CALCULATORS</div>
+    <ul>
+      <li onclick="switchTool('sci', 'Scientific Calculator')">Scientific Calculator</li>
+      <li onclick="switchTool('interest', 'Simple & Compound Interest')">Interest Calculator</li>
+      <li onclick="switchTool('gst', 'GST Calculator')">GST Calculator</li>
+      <li onclick="switchTool('emi', 'Loan / EMI Calculator')">Loan / EMI</li>
+      <li onclick="switchTool('bmi', 'BMI Calculator')">BMI (Body Metrics)</li>
+      <li onclick="switchTool('age', 'Age Calculator')">Age Calculator</li>
+      <li onclick="switchTool('numwords', 'Number to Words')">Number to Words</li>
+      <li onclick="switchTool('unit-wt', 'Weight Converter')">Weight Converter</li>
+      <li onclick="switchTool('unit-temp', 'Temperature Converter')">Temperature Converter</li>
+      <li onclick="switchTool('unit-speed', 'Speed Converter')">Speed Converter</li>
+      <li onclick="switchTool('unit-area', 'Area Converter')">Area Converter</li>
+      <li onclick="switchTool('unit-time', 'Time Converter')">Time Converter</li>
+      <li onclick="switchTool('unit-data', 'Data Converter')">Data Converter</li>
+      <li onclick="switchTool('fuel', 'Fuel Mileage Calc')">Fuel Cost & Efficiency</li>
+      <li onclick="switchTool('tip', 'Tip Calculator')">Tip Calculator</li>
     </ul>
   </div>
 
   <div class="app-body">
+    <!-- Calculator Pages -->
     <div id="std" class="tool-page active">
       <div class="display-screen" onclick="copyResult('std-display')">
         <span class="copy-toast" id="copy-toast">Copied!</span>
@@ -109,8 +125,23 @@
       </div>
     </div>
 
+    <!-- Settings Page -->
+    <div id="settings" class="tool-page">
+      <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:14px; border-radius:12px;">
+        <label style="margin:0; font-size:1rem; color:#fff;">Button Vibration</label>
+        <input type="checkbox" id="vib-toggle" checked style="width:20px; height:20px;">
+      </div>
+      <div class="res-box" style="margin-top:20px;">Calculator Pro v2.0 - Premium Edition</div>
+    </div>
+
+    <!-- Help Page -->
+    <div id="help" class="tool-page">
+      <div class="help-card">👉 Tap the menu icon (☰) in the top left to access all 18+ calculators like Currency, EMI, GST, or Units.</div>
+      <div class="help-card">👉 Tap on any Result screen to copy the calculation instantly to your clipboard.</div>
+      <div class="help-card">👉 Use the Rate and Share buttons in the header to share this app with your friends.</div>
+    </div>
+
     <div id="sci" class="tool-page"><div class="display-screen" onclick="copyResult('sci-display')"><div class="input-val" id="sci-display">0</div></div><div class="buttons"><button class="btn btn-sci" onclick="sciOp('sin')">sin</button><button class="btn btn-sci" onclick="sciOp('cos')">cos</button><button class="btn btn-sci" onclick="sciOp('tan')">tan</button><button class="btn btn-sci" onclick="sciOp('log')">log</button><button class="btn btn-sci" onclick="appendSci('3.14159')">π</button><button class="btn btn-sci" onclick="appendSci('**2')">x²</button><button class="btn btn-sci" onclick="sciOp('sqrt')">√</button><button class="btn btn-clear" onclick="clearSci()">C</button><button class="btn" onclick="appendSci('7')">7</button><button class="btn" onclick="appendSci('8')">8</button><button class="btn" onclick="appendSci('9')">9</button><button class="btn btn-op" onclick="appendSci('/')">÷</button><button class="btn" onclick="appendSci('4')">4</button><button class="btn" onclick="appendSci('5')">5</button><button class="btn" onclick="appendSci('6')">6</button><button class="btn btn-op" onclick="appendSci('*')">×</button><button class="btn" onclick="appendSci('1')">1</button><button class="btn" onclick="appendSci('2')">2</button><button class="btn" onclick="appendSci('3')">3</button><button class="btn btn-op" onclick="appendSci('-')">-</button><button class="btn" onclick="appendSci('0')">0</button><button class="btn" onclick="appendSci('.')">.</button><button class="btn btn-equal" style="grid-column: span 2;" onclick="calcSci()">=</button></div></div>
-    
     <div id="currency" class="tool-page"><div class="form-group"><label>Amount (USD $)</label><input type="number" id="curr-usd" oninput="calcCurrency()" placeholder="10"></div><div class="res-box" id="curr-res">₹0.00 INR</div></div>
     <div id="interest" class="tool-page"><div class="form-group"><label>Principal Amount (₹)</label><input type="number" id="int-p" placeholder="10000"></div><div class="form-group"><label>Rate of Interest (%)</label><input type="number" id="int-r" placeholder="8"></div><div class="form-group"><label>Time (Years)</label><input type="number" id="int-t" placeholder="2"></div><button class="calc-submit-btn" onclick="calcInterest()">Calculate Interest</button><div class="res-box" id="int-res">Result</div></div>
     <div id="numwords" class="tool-page"><div class="form-group"><label>Enter Number</label><input type="number" id="nw-input" oninput="convertNW()" placeholder="1250"></div><div class="res-box" id="nw-res">Zero</div></div>
@@ -131,6 +162,7 @@
     <div id="tip" class="tool-page"><div class="form-group"><label>Bill Amount (₹)</label><input type="number" id="tip-b" placeholder="1000"></div><div class="form-group"><label>Number of People</label><input type="number" id="tip-p" placeholder="4"></div><button class="calc-submit-btn" onclick="calcTip()">Calculate Per Person</button><div class="res-box" id="tip-res">Result</div></div>
   </div>
 
+  <!-- FIXED 320x50 BANNER AD -->
   <div id="ad-container">
     <script type="text/javascript">
       atOptions = {
@@ -142,11 +174,12 @@
       };
     </script>
     <script type="text/javascript" src="https://www.highperformanceformat.com/e2fb0481067ecb77e9c1a9e148e65c71/invoke.js"></script>
-                                                                   </div>
-                                                                    <script>
-    function vib() { if (navigator.vibrate) navigator.vibrate(20); }
+  </div>
+
+  <script>
+    function vib() { var t = document.getElementById('vib-toggle'); if ((!t || t.checked) && navigator.vibrate) navigator.vibrate(20); }
     function toggleSidebar() { vib(); document.getElementById('sidebar').classList.toggle('active'); }
-    function switchTool(tId, title) { vib(); var p = document.querySelectorAll('.tool-page'); for(var i=0; i<p.length; i++){ p[i].classList.remove('active'); } document.getElementById(tId).classList.add('active'); document.getElementById('tool-title').innerText = title; toggleSidebar(); }
+    function switchTool(tId, title) { vib(); var p = document.querySelectorAll('.tool-page'); for(var i=0; i<p.length; i++){ p[i].classList.remove('active'); } document.getElementById(tId).classList.add('active'); document.getElementById('tool-title').innerText = title; document.getElementById('sidebar').classList.remove('active'); }
     
     function copyResult(id) {
       var val = document.getElementById(id).innerText;
@@ -157,19 +190,11 @@
       vib();
     }
 
-    function shareApp() {
-      vib();
-      if (navigator.share) {
-        navigator.share({ title: 'Calculator Pro', text: 'Check out this awesome All-in-One Calculator App!', url: window.location.href });
-      } else {
-        alert('Share link: ' + window.location.href);
-      }
-    }
-
-    function rateApp() { vib(); alert('Thank you for using Calculator Pro! Please give us 5 Stars!'); }
+    function shareApp() { vib(); if (navigator.share) { navigator.share({ title: 'Calculator Pro', text: 'Check out this awesome All-in-One Calculator App!', url: window.location.href }); } else { alert('Share link: ' + window.location.href); } }
+    function rateApp() { vib(); alert('Thank you for using Calculator Pro! Please give us 5 Stars on Play Store!'); }
 
     var sDisp = document.getElementById('std-display'), sHist = document.getElementById('std-history'), sWords = document.getElementById('std-words');
-    function appendStd(n) { vib(); if (sDisp.innerText === '0') sDisp.innerText = n; else sDisp.innerText += n; updateWords(); }
+        function appendStd(n) { vib(); if (sDisp.innerText === '0') sDisp.innerText = n; else sDisp.innerText += n; updateWords(); }
     function appendStdOp(op) { vib(); sDisp.innerText += op; }
     function clearStd() { vib(); sDisp.innerText = '0'; sHist.innerText = ''; sWords.innerText = 'Zero'; }
     function delStd() { vib(); sDisp.innerText = sDisp.innerText.slice(0, -1) || '0'; updateWords(); }
@@ -203,6 +228,7 @@
     function inWords(n) { if (n === 0) return 'Zero'; var a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']; var b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']; if(n < 20) return a[n]; if(n < 100) return b[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : ''); if(n < 1000) return a[Math.floor(n / 100)] + ' Hundred ' + (n % 100 ? inWords(n % 100) : ''); if(n < 100000) return inWords(Math.floor(n / 1000)) + ' Thousand ' + (n % 1000 ? inWords(n % 1000) : ''); return inWords(Math.floor(n / 100000)) + ' Lakh ' + (n % 100000 ? inWords(n % 100000) : ''); }
   </script>
 
+  <!-- ACTIVE SOCIAL BAR AD -->
   <script src="https://pl30790893.effectivecpmnetwork.com/e0/d9/e1/e0d9e140d2a95360f9f664cd9cdfcc54.js"></script>
 </body>
 </html>
